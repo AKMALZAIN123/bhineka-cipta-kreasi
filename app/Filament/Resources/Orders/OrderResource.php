@@ -53,4 +53,9 @@ class OrderResource extends Resource
             'edit' => EditOrder::route('/{record}/edit'),
         ];
     }
+
+     public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 }

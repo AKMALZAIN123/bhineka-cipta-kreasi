@@ -50,16 +50,16 @@ class User extends Authenticatable
 
      public function carts()
     {
-        return $this->hasMany(Cart::class);
+        return $this->hasMany(Cart::class, 'cart_id');
     }
 
     public function designUploads()
     {
-        return $this->hasMany(DesignUpload::class);
+        return $this->hasMany(DesignUpload::class, 'design_id');
     }
 
     public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class, 'order_id');
     }
 }
