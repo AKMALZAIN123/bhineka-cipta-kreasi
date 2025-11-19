@@ -6,23 +6,35 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index()
+        public function index()
     {
         return view('home');
     }
 
-    public function service()
+    public function produk()
     {
-        return view('service');
+        return view('produk');
     }
 
-    public function contact()
+    public function koleksi()
     {
-        return view('contact');
+        return view('koleksi');
     }
 
-    public function portofolio()
+    public function tentang()
     {
-        return view('portofolio');
+        return view('tentang');
     }
+
+    public function kontak()
+    {
+        return view('kontak');
+    }
+
+    public function regis()
+    {
+        return view('regis');
+    }
+    
+
 }

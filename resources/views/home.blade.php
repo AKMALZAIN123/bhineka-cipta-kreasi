@@ -1,305 +1,365 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdPrint Pro - Advertising & Printing Solutions</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-</head>
-<body>
+    @extends('layouts.app')
 
-    <!-- Navbar -->
-    <nav class="navbar fixed w-full top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-4">
-            <div class="flex justify-between items-center">
-                <!-- Logo -->
-                <!-- Desktop: Full Name -->
-                <div class="hidden md:block text-xl font-semibold tracking-wider text-[#a0826d]">
-                    BHINEKA<span class="font-light"> CIPTA KREASI</span>
-                </div>
+    @section('css')
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    @endsection
 
-                <!-- Mobile: Singkatan -->
-                <div class="md:hidden text-[#a0826d]">
-                    <div class="text-xl font-bold tracking-widest">BCK</div>
-                    <div class="text-[9px] font-light tracking-wide -mt-0.5">BHINEKA CIPTA KREASI</div>
-                </div>
-                
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex space-x-8">
-                    <a href="#home" class="text-gray-700 hover:text-[#a0826d] transition">BERANDA</a>
-                    <a href="#services" class="text-gray-700 hover:text-[#a0826d] transition">LAYANAN</a>
-                    <a href="#portfolio" class="text-gray-700 hover:text-[#a0826d] transition">PORTFOLIO</a>
-                    <a href="#contact" class="text-gray-700 hover:text-[#a0826d] transition">KONTAK</a>
-                </div>
-                
-                <!-- Mobile Menu Button -->
-                <button class="md:hidden text-gray-700" id="mobileMenuBtn">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-            </div>
-            
-            <!-- Mobile Menu -->
-            <div class="mobile-menu md:hidden mt-4" id="mobileMenu">
-                <div class="flex flex-col space-y-3">
-                    <a href="#home" class="text-gray-700 hover:text-[#a0826d] transition py-2">BERANDA</a>
-                    <a href="#services" class="text-gray-700 hover:text-[#a0826d] transition py-2">LAYANAN</a>
-                    <a href="#portfolio" class="text-gray-700 hover:text-[#a0826d] transition py-2">PORTFOLIO</a>
-                    <a href="#contact" class="text-gray-700 hover:text-[#a0826d] transition py-2">KONTAK</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    @section('content')
 
     <!-- Hero Section -->
-    <section id="home" class="relative h-screen flex items-center justify-center mt-16">
-        <div class="absolute inset-0 bg-gray-300">
-            <!-- Placeholder for hero image -->
-            <div class="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
-                <img src="{{ asset('images/hero.png') }}" alt="Hero Image" class="w-full h-full object-cover">
-            </div>
-        </div>
-        <div class="hero-overlay absolute inset-0"></div>
-        <div class="relative z-10 text-center text-white px-6 fade-in">
-            <h1 class="text-5xl md:text-7xl font-light mb-6 tracking-wider">
-                TRANSFORMASI VISUAL<br>
-                <span class="font-semibold">UNTUK BISNIS ANDA</span>
-            </h1>
-            <p class="text-lg md:text-xl mb-8 font-light max-w-2xl mx-auto">
-                Solusi lengkap advertising dan printing untuk mengangkat brand Anda ke level selanjutnya
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Bhineka Cipta Kreasi</h1>
+            <p class="hero-subtitle">
+                Wujudkan Brand Impian Anda dengan Layanan Percetakan & Periklanan Profesional. 
+                Dari Banner, Kartu Undangan, hingga Media Promosi Berkualitas Tinggi.
             </p>
-            <a href="#contact" class="btn-primary inline-block px-8 py-4 text-white font-medium tracking-wide">
-                REQUEST PENAWARAN
-            </a>
+            <button class="btn-primary">
+                Lihat Produk
+                <i class="fas fa-arrow-right"></i>
+            </button>
         </div>
     </section>
 
-    <!-- Services Section -->
-    <section id="services" class="py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16 fade-in">
-                <h2 class="section-title text-sm mb-4">LAYANAN KAMI</h2>
-                <h3 class="text-4xl md:text-5xl font-light text-gray-800">
-                    Solusi <span class="font-semibold">Komprehensif</span>
-                </h3>
+    <!-- Featured Categories -->
+    <section class="categories">
+        <div class="container">
+            <div class="section-header">
+                <h2>Layanan Kami</h2>
+                <p>Berbagai solusi percetakan dan periklanan untuk kebutuhan bisnis Anda</p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Service Card 1 -->
-                <div class="service-card bg-white rounded-lg shadow-md">
-                    <div class="h-64 bg-gray-200 overflow-hidden">
-                        <div class="w-full h-full bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center">
-                            <p class="text-gray-600 text-xs">services/printing.jpg</p>
-                        </div>
+            <div class="category-grid">
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-flag"></i>
                     </div>
-                    <div class="p-6 text-center">
-                        <h4 class="text-xl font-semibold mb-2 text-gray-800">PERCETAKAN</h4>
-                        <p class="text-gray-600 text-sm">Banner, Undangan, Lanyard, Sticker & lebih banyak lagi</p>
-                    </div>
+                    <h3>Banner & Spanduk</h3>
+                    <p>Berbagai ukuran dan bahan berkualitas</p>
                 </div>
                 
-                <!-- Service Card 2 -->
-                <div class="service-card bg-white rounded-lg shadow-md">
-                    <div class="h-64 bg-gray-200 overflow-hidden">
-                        <div class="w-full h-full bg-gradient-to-br from-green-200 to-green-300 flex items-center justify-center">
-                            <p class="text-gray-600 text-xs">services/promotional.jpg</p>
-                        </div>
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-envelope"></i>
                     </div>
-                    <div class="p-6 text-center">
-                        <h4 class="text-xl font-semibold mb-2 text-gray-800">ALAT PERAGA</h4>
-                        <p class="text-gray-600 text-sm">Booth, Tenda Promosi, X-Banner, Roll Banner</p>
-                    </div>
+                    <h3>Kartu Undangan</h3>
+                    <p>Desain custom dan cetak premium</p>
                 </div>
                 
-                <!-- Service Card 3 -->
-                <div class="service-card bg-white rounded-lg shadow-md">
-                    <div class="h-64 bg-gray-200 overflow-hidden">
-                        <div class="w-full h-full bg-gradient-to-br from-purple-200 to-purple-300 flex items-center justify-center">
-                            <p class="text-gray-600 text-xs">services/merchandise.jpg</p>
-                        </div>
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-id-card"></i>
                     </div>
-                    <div class="p-6 text-center">
-                        <h4 class="text-xl font-semibold mb-2 text-gray-800">MERCHANDISE</h4>
-                        <p class="text-gray-600 text-sm">Botol Logo, Tumbler, Tote Bag, Custom Apparel</p>
-                    </div>
+                    <h3>Lanyard & ID Card</h3>
+                    <p>Untuk event dan keperluan kantor</p>
                 </div>
                 
-                <!-- Service Card 4 -->
-                <div class="service-card bg-white rounded-lg shadow-md">
-                    <div class="h-64 bg-gray-200 overflow-hidden">
-                        <div class="w-full h-full bg-gradient-to-br from-orange-200 to-orange-300 flex items-center justify-center">
-                            <p class="text-gray-600 text-xs">services/outdoor.jpg</p>
-                        </div>
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-store"></i>
                     </div>
-                    <div class="p-6 text-center">
-                        <h4 class="text-xl font-semibold mb-2 text-gray-800">MEDIA OUTDOOR</h4>
-                        <p class="text-gray-600 text-sm">Baliho, Videotron, Neon Sign, Signboard</p>
+                    <h3>Booth & Tenda</h3>
+                    <p>Alat peraga promosi profesional</p>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-mug-hot"></i>
                     </div>
+                    <h3>Merchandise</h3>
+                    <p>Botol minum, tumbler, dan aksesoris</p>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-tv"></i>
+                    </div>
+                    <h3>Media Digital</h3>
+                    <p>Videotron dan baliho digital</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Portfolio Section -->
-    <section id="portfolio" class="py-24 bg-[#f5f5f0]">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16 fade-in">
-                <h2 class="section-title text-sm mb-4">PORTFOLIO KAMI</h2>
-                <h3 class="text-4xl md:text-5xl font-light text-gray-800">
-                    Karya <span class="font-semibold">Terpilih</span>
-                </h3>
+    <!-- New Products -->
+    <section class="products">
+        <div class="container">
+            <div class="section-header">
+                <h2>Produk Terbaru</h2>
+                <p>Temukan produk terbaru dengan kualitas terbaik dan harga terjangkau</p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Portfolio Item 1 -->
-                <div class="portfolio-item bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="h-80 bg-gray-200">
-                        <div class="w-full h-full bg-gradient-to-br from-red-200 to-red-300 flex items-center justify-center">
-                            <p class="text-gray-600 text-xs">portfolio/project-1.jpg</p>
-                        </div>
+            <div class="product-grid">
+                <!-- Product 1 -->
+                <div class="product-card">
+                    <div class="product-badge">Baru</div>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1611329857570-f02f340e7378?w=400" alt="Banner X">
                     </div>
-                    <div class="p-4">
-                        <p class="text-sm text-gray-600 text-center">Event Booth Design</p>
+                    <div class="product-info">
+                        <h3>Banner X Premium</h3>
+                        <p class="product-desc">Ukuran 160x60cm, Material Premium</p>
+                        <div class="product-footer">
+                            <span class="price">Rp 125.000</span>
+                            <button class="add-to-cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- Portfolio Item 2 -->
-                <div class="portfolio-item bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="h-80 bg-gray-200">
-                        <div class="w-full h-full bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center">
-                            <p class="text-gray-600 text-xs">portfolio/project-2.jpg</p>
-                        </div>
+
+                <!-- Product 2 -->
+                <div class="product-card">
+                    <div class="product-badge">Populer</div>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1530435460869-d13625c69bbf?w=400" alt="Kartu Undangan">
                     </div>
-                    <div class="p-4">
-                        <p class="text-sm text-gray-600 text-center">Corporate Branding</p>
+                    <div class="product-info">
+                        <h3>Kartu Undangan Custom</h3>
+                        <p class="product-desc">Desain custom, cetak 100 pcs</p>
+                        <div class="product-footer">
+                            <span class="price">Rp 350.000</span>
+                            <button class="add-to-cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- Portfolio Item 3 -->
-                <div class="portfolio-item bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="h-80 bg-gray-200">
-                        <div class="w-full h-full bg-gradient-to-br from-yellow-200 to-yellow-300 flex items-center justify-center">
-                            <p class="text-gray-600 text-xs">portfolio/project-3.jpg</p>
-                        </div>
+
+                <!-- Product 3 -->
+                <div class="product-card">
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400" alt="Lanyard">
                     </div>
-                    <div class="p-4">
-                        <p class="text-sm text-gray-600 text-center">Billboard Campaign</p>
+                    <div class="product-info">
+                        <h3>Lanyard Custom Logo</h3>
+                        <p class="product-desc">Print sublim, minimal order 50 pcs</p>
+                        <div class="product-footer">
+                            <span class="price">Rp 15.000</span>
+                            <button class="add-to-cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- Portfolio Item 4 -->
-                <div class="portfolio-item bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="h-80 bg-gray-200">
-                        <div class="w-full h-full bg-gradient-to-br from-green-200 to-green-300 flex items-center justify-center">
-                            <p class="text-gray-600 text-xs">portfolio/project-4.jpg</p>
-                        </div>
+
+                <!-- Product 4 -->
+                <div class="product-card">
+                    <div class="product-badge sale">Promo</div>
+                    <button class="wishlist-btn active">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?w=400" alt="Tumbler">
                     </div>
-                    <div class="p-4">
-                        <p class="text-sm text-gray-600 text-center">Product Packaging</p>
+                    <div class="product-info">
+                        <h3>Tumbler Stainless Custom</h3>
+                        <p class="product-desc">500ml dengan logo perusahaan</p>
+                        <div class="product-footer">
+                            <span class="price">Rp 75.000 <span class="old-price">Rp 95.000</span></span>
+                            <button class="add-to-cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- Portfolio Item 5 -->
-                <div class="portfolio-item bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="h-80 bg-gray-200">
-                        <div class="w-full h-full bg-gradient-to-br from-purple-200 to-purple-300 flex items-center justify-center">
-                            <p class="text-gray-600 text-xs">portfolio/project-5.jpg</p>
-                        </div>
+
+                <!-- Product 5 -->
+                <div class="product-card">
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1588282322673-c31965a75c3e?w=400" alt="Booth">
                     </div>
-                    <div class="p-4">
-                        <p class="text-sm text-gray-600 text-center">Exhibition Stand</p>
+                    <div class="product-info">
+                        <h3>Booth Promosi 3x3m</h3>
+                        <p class="product-desc">Tenda promosi dengan custom print</p>
+                        <div class="product-footer">
+                            <span class="price">Rp 2.500.000</span>
+                            <button class="add-to-cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- Portfolio Item 6 -->
-                <div class="portfolio-item bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="h-80 bg-gray-200">
-                        <div class="w-full h-full bg-gradient-to-br from-pink-200 to-pink-300 flex items-center justify-center">
-                            <p class="text-gray-600 text-xs">portfolio/project-6.jpg</p>
+
+                <!-- Product 6 -->
+                <div class="product-card">
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400" alt="Banner Roll Up">
+                    </div>
+                    <div class="product-info">
+                        <h3>Roll Up Banner</h3>
+                        <p class="product-desc">85x200cm, portable dan praktis</p>
+                        <div class="product-footer">
+                            <span class="price">Rp 225.000</span>
+                            <button class="add-to-cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
                         </div>
                     </div>
-                    <div class="p-4">
-                        <p class="text-sm text-gray-600 text-center">Merchandise Collection</p>
+                </div>
+
+                <!-- Product 7 -->
+                <div class="product-card">
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1609921212029-bb5a28e60960?w=400" alt="Spanduk">
+                    </div>
+                    <div class="product-info">
+                        <h3>Spanduk Flexi Korea</h3>
+                        <p class="product-desc">Custom ukuran, material premium</p>
+                        <div class="product-footer">
+                            <span class="price">Rp 35.000/m²</span>
+                            <button class="add-to-cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 8 -->
+                <div class="product-card">
+                    <div class="product-badge">Terlaris</div>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=400" alt="Sticker">
+                    </div>
+                    <div class="product-info">
+                        <h3>Sticker Vinyl Cut</h3>
+                        <p class="product-desc">Custom design, tahan lama</p>
+                        <div class="product-footer">
+                            <span class="price">Rp 25.000/m²</span>
+                            <button class="add-to-cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="text-center mt-12">
-                <a href="#" class="btn-primary inline-block px-8 py-3 text-white font-medium tracking-wide">
-                    LIHAT SEMUA PROJECT
-                </a>
+            <div class="text-center">
+                <button class="btn-secondary">Lihat Semua Produk</button>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="py-24 bg-[#a0826d]">
-        <div class="max-w-4xl mx-auto text-center px-6">
-            <h2 class="text-4xl md:text-5xl font-light text-white mb-6">
-                Siap Memulai <span class="font-semibold">Proyek Anda?</span>
-            </h2>
-            <p class="text-white text-lg mb-8 font-light">
-                Hubungi kami untuk konsultasi gratis dan dapatkan penawaran terbaik
-            </p>
-            <a href="#contact" class="inline-block bg-white text-[#a0826d] px-10 py-4 font-semibold tracking-wide hover:shadow-2xl transition">
-                HUBUNGI KAMI
-            </a>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer id="contact" class="bg-[#2a2a2a] text-white py-16">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                <!-- Company Info -->
-                <div>
-                    <h3 class="text-2xl font-semibold mb-4">ADPRINT<span class="font-light">PRO</span></h3>
-                    <p class="text-gray-400 mb-4">
-                        Solusi terpercaya untuk kebutuhan advertising dan printing berkualitas tinggi.
-                    </p>
+    <!-- Promo Banner -->
+    <section class="promo-section">
+        <div class="container">
+            <div class="promo-grid">
+                <div class="promo-image">
+                    <img src="https://images.unsplash.com/photo-1542744094-3a31f272c490?w=600" alt="Promo">
                 </div>
-                
-                <!-- Quick Links -->
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">QUICK LINKS</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#services" class="text-gray-400 hover:text-white transition">Layanan</a></li>
-                        <li><a href="#portfolio" class="text-gray-400 hover:text-white transition">Portfolio</a></li>
-                        <li><a href="#contact" class="text-gray-400 hover:text-white transition">Kontak</a></li>
+                <div class="promo-content">
+                    <h2>Dapatkan Penawaran Spesial!</h2>
+                    <p>Desain gratis untuk pemesanan banner dan spanduk di atas 10m². Promo terbatas hanya bulan ini!</p>
+                    <ul class="promo-features">
+                        <li><i class="fas fa-check"></i> Desain gratis oleh tim profesional</li>
+                        <li><i class="fas fa-check"></i> Revisi unlimited hingga puas</li>
+                        <li><i class="fas fa-check"></i> Cetak berkualitas tinggi</li>
+                        <li><i class="fas fa-check"></i> Pengiriman cepat</li>
                     </ul>
+                    <button class="btn-primary">
+                        Dapatkan Promo
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Collections -->
+    <section class="collections" id="collections">
+        <div class="container">
+            <div class="section-header">
+                <h2>Koleksi Unggulan</h2>
+                <p>Jelajahi kategori produk pilihan untuk kebutuhan promosi dan event Anda</p>
+            </div>
+            
+            <div class="collection-grid">
+                <div class="collection-card large">
+                    <img src="https://images.unsplash.com/photo-1596079890744-c1a0462d0975?w=600" alt="Percetakan">
+                    <div class="collection-overlay">
+                        <h3>Percetakan</h3>
+                        <p>Banner, Spanduk, Brosur & Lebih</p>
+                        <button class="btn-outline">Jelajahi</button>
+                    </div>
                 </div>
                 
-                <!-- Contact Info -->
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">KONTAK</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li>📍 Jakarta, Indonesia</li>
-                        <li>📞 +62 812 3456 7890</li>
-                        <li>✉️ info@adprintpro.com</li>
-                    </ul>
-                    <div class="flex space-x-4 mt-6">
-                        <a href="#" class="hover:text-[#a0826d] transition">Instagram</a>
-                        <a href="#" class="hover:text-[#a0826d] transition">Facebook</a>
+                <div class="collection-card">
+                    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400" alt="Event">
+                    <div class="collection-overlay">
+                        <h3>Alat Event</h3>
+                        <p>Booth, Tenda & Backdrop</p>
+                        <button class="btn-outline">Jelajahi</button>
+                    </div>
+                </div>
+                
+                <div class="collection-card">
+                    <img src="https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400" alt="Merchandise">
+                    <div class="collection-overlay">
+                        <h3>Merchandise</h3>
+                        <p>Custom Branding Products</p>
+                        <button class="btn-outline">Jelajahi</button>
+                    </div>
+                </div>
+                
+                <div class="collection-card">
+                    <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400" alt="Digital">
+                    <div class="collection-overlay">
+                        <h3>Media Digital</h3>
+                        <p>Videotron & Baliho</p>
+                        <button class="btn-outline">Jelajahi</button>
+                    </div>
+                </div>
+                
+                <div class="collection-card large">
+                    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600" alt="Corporate">
+                    <div class="collection-overlay">
+                        <h3>Corporate</h3>
+                        <p>Solusi Lengkap untuk Bisnis</p>
+                        <button class="btn-outline">Jelajahi</button>
                     </div>
                 </div>
             </div>
-            
-            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500">
-                <p>&copy; 2024 AdPrintPro. All rights reserved.</p>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Dapatkan Penawaran Eksklusif</h2>
+                <p>Daftarkan email Anda dan dapatkan info promo, tips branding, dan penawaran spesial langsung ke inbox Anda</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Masukkan email Anda" required>
+                    <button type="submit" class="btn-primary">Berlangganan</button>
+                </form>
             </div>
         </div>
-    </footer>
+    </section>
 
-    <!-- WhatsApp Float Button -->
-    <a href="https://wa.me/6281234567890" target="_blank" class="whatsapp-float">
-        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-        </svg>
-    </a>
+    @endsection
 
-    <!-- JavaScript -->
-    <script src="{{ asset('js/main.js') }}"></script>
-</body>
-</html>
+    @push('scripts')
+    <script src="{{ asset('js/home.js') }}"></script>
+    @endpush
