@@ -35,6 +35,12 @@ class HomeController extends Controller
     {
         return view('regis');
     }
-    
+
+        public function detail()
+        {
+            return view('detail');
+        }
+
+
 
 }

@@ -7,7 +7,21 @@
 @endsection
 
 @section('content')
-        <!-- Products Section -->
+    <!-- Breadcrumb -->
+    <section class="breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-items">
+                <a href="index.html">
+                    <i class="fas fa-home"></i>
+                    Beranda
+                </a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Produk</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
     <section class="products-section">
         <div class="container">
             <div class="products-layout">
@@ -157,7 +171,7 @@
                     <!-- Products Grid -->
                     <div class="products-grid" id="productsGrid">
                         <!-- Product 1 -->
-                        <div class="product-card">
+                        <div class="product-card" data-product-id="1">
                             <div class="product-badge">Terlaris</div>
                             <button class="wishlist-btn">
                                 <i class="far fa-heart"></i>
@@ -165,10 +179,10 @@
                             <div class="product-image">
                                 <img src="https://images.unsplash.com/photo-1611329857570-f02f340e7378?w=400" alt="Banner X">
                                 <div class="product-overlay">
-                                    <button class="btn-quick-view">
+                                    <a href="{{ route('detail') }}" class="btn-quick-view">
                                         <i class="fas fa-eye"></i>
                                         Quick View
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                             <div class="product-info">
@@ -193,7 +207,7 @@
                         </div>
 
                         <!-- Product 2 -->
-                        <div class="product-card">
+                        <div class="product-card" data-product-id="2">
                             <div class="product-badge sale">Promo</div>
                             <button class="wishlist-btn">
                                 <i class="far fa-heart"></i>
@@ -495,4 +509,8 @@
             </div>
         </div>
     </section>
-@endsection
+    @endsection
+
+    @push('scripts')
+    <script src="{{ asset('js/produk.js') }}"></script>
+    @endpush

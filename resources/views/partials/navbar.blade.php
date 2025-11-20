@@ -7,12 +7,11 @@
                     <span>Bhineka Cipta Kreasi</span>
                 </div>
                 
-                <div class="nav-links" id="navLinks">
-                    <a href="/" class="active">Beranda</a>
-                    <a href="produk.html">Produk</a>
-                    <a href="#collections">Koleksi</a>
-                    <a href="#about">Tentang</a>
-                    <a href="#contact">Kontak</a>
+               <div class="nav-links" id="navLinks">
+                    <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
+                    <a href="{{ route('produk') }}" class="{{ request()->routeIs('produk') ? 'active' : '' }}">Produk</a>
+                    <a href="{{ route('tentang') }}" class="{{ request()->routeIs('tentang') ? 'active' : '' }}">Tentang</a>
+                    <a href="{{ route('kontak') }}" class="{{ request()->routeIs('kontak') ? 'active' : '' }}">Kontak</a>
                 </div>
                 
                 <div class="nav-actions">

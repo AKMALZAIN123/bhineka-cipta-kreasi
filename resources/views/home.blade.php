@@ -15,7 +15,7 @@
                 Wujudkan Brand Impian Anda dengan Layanan Percetakan & Periklanan Profesional. 
                 Dari Banner, Kartu Undangan, hingga Media Promosi Berkualitas Tinggi.
             </p>
-            <button class="btn-primary">
+            <button class="btn-primary" onclick="window.location.href='{{ route('produk') }}'">
                 Lihat Produk
                 <i class="fas fa-arrow-right"></i>
             </button>
