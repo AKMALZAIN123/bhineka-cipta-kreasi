@@ -17,8 +17,6 @@
                 <i class="fas fa-chevron-right"></i>
                 <a href="{{ route('produk') }}">Produk</a>
                 <i class="fas fa-chevron-right"></i>
-                <a href="products.html?category=banner">Banner & Spanduk</a>
-                <i class="fas fa-chevron-right"></i>
                 <span id="productName">Banner X Premium</span>
             </div>
         </div>

@@ -19,7 +19,7 @@
                         <i class="fas fa-search"></i>
                     </button>
                     <button class="icon-btn cart-btn">
-                        <i class="fas fa-shopping-cart"></i>
+                        <i class="fas fa-shopping-cart" onclick="window.location.href='{{ route('cart') }}'"></i>
                         <span class="cart-badge">0</span>
                     </button>
                     <button class="icon-btn" >

@@ -36,10 +36,15 @@ class HomeController extends Controller
         return view('regis');
     }
 
-        public function detail()
-        {
-            return view('detail');
-        }
+    public function detail()
+    {
+        return view('detail');
+    }
+
+    public function cart()
+    {
+        return view('cart');
+    }
 
 
 

@@ -11,7 +11,7 @@
     <section class="breadcrumb">
         <div class="container">
             <div class="breadcrumb-items">
-                <a href="index.html">
+                <a href="{{ route('home') }}">
                     <i class="fas fa-home"></i>
                     Beranda
                 </a>
