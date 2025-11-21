@@ -38,6 +38,38 @@ class OrdersTable
                     ->sortable()
                     ->weight('bold')
                     ->icon('heroicon-o-user'),
+                
+                TextColumn::make('alamat')
+                    ->label('Alamat')
+                    ->limit(30)
+                    ->tooltip(function (TextColumn $column): ?string {
+                        $state = $column->getState();
+                        if (strlen($state) <= 30) {
+                            return null;
+                        }
+                        return $state;
+                    })
+                    ->searchable()
+                    ->toggleable(),
+
+                TextColumn::make('no_telp')
+                    ->label('No. Telp')
+                    ->searchable()
+                    ->icon('heroicon-o-phone')
+                    ->copyable()
+                    ->toggleable(),
+                
+                TextColumn::make('orderItems')
+                    ->label('Items')
+                    ->getStateUsing(fn ($record) => $record->orderItems()->count() . ' items')
+                    ->badge()
+                    ->color('info'),
+
+                TextColumn::make('total_items')
+                    ->label('Qty')
+                    ->getStateUsing(fn ($record) => $record->orderItems()->sum('quantity'))
+                    ->badge()
+                    ->color('primary'),
 
                 TextColumn::make('order_date')
                     ->label('Order Date')
@@ -173,7 +205,6 @@ class OrdersTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
                 
                 ActionGroup::make([
                     Action::make('confirm')

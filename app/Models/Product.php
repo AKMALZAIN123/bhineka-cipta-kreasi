@@ -26,11 +26,16 @@ class Product extends Model
     // Relationships
     public function cartItems()
     {
-        return $this->hasMany(CartItem::class, 'product_id', 'product_id');
+        return $this->hasMany(CartItem::class, 'product_id');
     }
 
     public function designUploads()
     {
-        return $this->hasMany(DesignUpload::class, 'product_id', 'product_id');
+        return $this->hasMany(DesignUpload::class, 'product_id');
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class, 'product_id');
     }
 }

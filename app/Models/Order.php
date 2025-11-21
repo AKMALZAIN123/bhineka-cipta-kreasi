@@ -31,6 +31,17 @@ class Order extends Model
 
     public function payment()
     {
-        return $this->hasOne(Payment::class, 'order_id', 'order_id');
+        return $this->hasOne(Payment::class, 'order_id');
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class, 'order_id');
+    }
+
+    // Accessor untuk total items
+    public function getTotalItemsAttribute()
+    {
+        return $this->orderItems()->sum('quantity');
     }
 }

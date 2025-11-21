@@ -19,10 +19,14 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        Admin::create([
-            'name' => 'Super Admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('123'),
+        $this->call([
+            AdminSeeder::class,
+            UserSeeder::class,
+            ProductSeeder::class,
+            // CartSeeder::class,
+            // DesignUploadSeeder::class,
+            OrderSeeder::class,  // Order with OrderItems
+            // PaymentSeeder::class,
         ]);
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-        public function index()
+    public function index()
     {
         return view('home');
     }
@@ -14,11 +14,6 @@ class HomeController extends Controller
     public function produk()
     {
         return view('produk');
-    }
-
-    public function koleksi()
-    {
-        return view('koleksi');
     }
 
     public function tentang()
@@ -31,21 +26,25 @@ class HomeController extends Controller
         return view('kontak');
     }
 
-    public function regis()
-    {
-        return view('regis');
-    }
-
     public function detail()
     {
         return view('detail');
     }
 
+    // Protected routes
     public function cart()
     {
         return view('cart');
     }
 
+    public function dashboard()
+    {
+        return redirect()->route('home');
+    }
 
 
+    public function orders()
+    {
+        return view('orders');
+    }
 }

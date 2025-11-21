@@ -2,6 +2,7 @@
 namespace App\Filament\Resources\Customers\Tables;
 
 use Filament\Tables;
+use App\Models\Order;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\BulkActionGroup;
@@ -61,7 +62,7 @@ class CustomersTable
 
                 TextColumn::make('orders_count')
                     ->label('Total Pesanan')
-                    ->counts('orders')
+                    ->getStateUsing(fn ($record) => Order::where('user_id', $record->user_id)->count())
                     ->badge()
                     ->color('info')
                     ->sortable(),
@@ -69,7 +70,7 @@ class CustomersTable
                 TextColumn::make('total_spent')
                     ->label('Total Belanja')
                     ->getStateUsing(fn ($record) => 
-                        $record->orders()
+                        Order::where('user_id', $record->user_id)
                             ->where('status', '!=', 'cancelled')
                             ->sum('total_amount')
                     )
@@ -182,10 +183,10 @@ class CustomersTable
                         ->label('View Orders')
                         ->icon('heroicon-o-shopping-cart')
                         ->color('primary')
-                        ->url(fn ($record) => route('filament.admin.resources.orders.orders.index', [
+                        ->url(fn ($record) => route('filament.admin.resources.orders.index', [
                             'tableFilters' => [
-                                'user_id' => ['value' => $record->user_id]
-                            ]
+                                'user_id' => ['value' => $record->user_id],
+                            ],
                         ]))
                         ->visible(fn ($record) => $record->orders()->count() > 0),
 
