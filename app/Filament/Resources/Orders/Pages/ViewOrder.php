@@ -17,8 +17,6 @@ class ViewOrder extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make(),
-
             ActionGroup::make([
                 Action::make('confirm')
                     ->label('Confirm Order')

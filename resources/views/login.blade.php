@@ -44,7 +44,7 @@
                 <div class="login-form-wrapper">
                     <div class="form-header">
                         <h2>Masuk ke Akun Anda</h2>
-                        <p>Belum punya akun? <a href="{{ route('regis') }}" class="link-primary">Daftar Sekarang</a></p>
+                        <p>Belum punya akun? <a href="{{ route('register.form') }}" class="link-primary">Daftar Sekarang</a></p>
                     </div>
 
                     <!-- Social Login -->
@@ -64,7 +64,8 @@
                     </div>
 
                     <!-- Login Form -->
-                    <form class="login-form" id="loginForm">
+                   <form class="login-form" id="loginForm" method="POST" action="{{ route('login') }}">
+                        @csrf
                         <div class="form-group">
                             <label for="email">
                                 <i class="fas fa-envelope"></i>
@@ -117,7 +118,7 @@
                         </button>
 
                         <div class="form-footer">
-                            <p>Belum punya akun? <a href="{{ route('regis') }}" class="link-primary">Daftar sekarang</a></p>
+                            <p>Belum punya akun? <a href="{{ route('register.form') }}" class="link-primary">Daftar sekarang</a></p>
                         </div>
                     </form>
 

@@ -10,7 +10,6 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\Textarea;
-use App\Filament\Resources\Customers\Widgets\CustomerActivityTimeLine;
 
 class ViewCustomer extends ViewRecord
 {
@@ -47,10 +46,10 @@ class ViewCustomer extends ViewRecord
                     ->label('View All Orders')
                     ->icon('heroicon-o-shopping-cart')
                     ->color('primary')
-                    ->url(fn () => route('filament.admin.resources.orders.orders.index', [
+                    ->url(fn ($record) => route('filament.admin.resources.orders.index', [
                         'tableFilters' => [
-                            'user_id' => ['value' => $this->record->user_id]
-                        ]
+                            'user_id' => ['value' => $record->user_id],
+                        ],
                     ]))
                     ->visible(fn () => $this->record->orders()->count() > 0),
 
@@ -107,12 +106,5 @@ class ViewCustomer extends ViewRecord
     public function getTitle(): string
     {
         return "Customer: {$this->record->name}";
-    }
-
-    protected function getFooterWidgets(): array
-    {
-        return [
-           CustomerActivityTimeline::class,
-        ];
     }
 }

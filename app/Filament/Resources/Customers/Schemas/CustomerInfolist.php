@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Customers\Schemas;
 
 use Filament\Infolists;
+use App\Models\Order;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
 use Filament\Schemas\Components\Section;
@@ -10,6 +11,7 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Support\Enums\TextSize;
 
 class CustomerInfolist
@@ -74,7 +76,7 @@ class CustomerInfolist
                             ->schema([
                                 TextEntry::make('orders_count')
                                     ->label('Total Pesanan')
-                                    ->getStateUsing(fn ($record) => $record->orders()->count())
+                                    ->getStateUsing(fn ($record) => Order::where('user_id', $record->user_id)->count())
                                     ->badge()
                                     ->color('primary')
                                     ->icon('heroicon-o-shopping-cart')
@@ -83,7 +85,7 @@ class CustomerInfolist
                                 TextEntry::make('total_spent')
                                     ->label('Total Belanja')
                                     ->getStateUsing(fn ($record) => 
-                                        $record->orders()
+                                        Order::where('user_id', $record->user_id)
                                             ->where('status', '!=', 'cancelled')
                                             ->sum('total_amount')
                                     )
@@ -95,122 +97,19 @@ class CustomerInfolist
 
                                 TextEntry::make('pending_orders')
                                     ->label('Pesanan Pending')
-                                    ->getStateUsing(fn ($record) => $record->orders()->where('status', 'pending')->count())
+                                    ->getStateUsing(fn ($record) => Order::where('user_id', $record->user_id)->where('status', 'pending')->count())
                                     ->badge()
                                     ->color('warning')
                                     ->icon('heroicon-o-clock'),
 
                                 TextEntry::make('completed_orders')
                                     ->label('Pesanan Selesai')
-                                    ->getStateUsing(fn ($record) => $record->orders()->where('status', 'delivered')->count())
+                                    ->getStateUsing(fn ($record) => Order::where('user_id', $record->user_id)->where('status', 'delivered')->count())
                                     ->badge()
                                     ->color('success')
                                     ->icon('heroicon-o-check-badge'),
                             ]),
                     ]),
-
-                Section::make('Riwayat Pesanan')
-                    ->schema([
-                        RepeatableEntry::make('orders')
-                            ->label('')
-                            ->schema([
-                                TextEntry::make('order_id')
-                                    ->label('Order ID')
-                                    ->badge()
-                                    ->color('primary'),
-
-                                TextEntry::make('order_date')
-                                    ->label('Tanggal')
-                                    ->date('d M Y'),
-
-                                TextEntry::make('total_amount')
-                                    ->label('Total')
-                                    ->money('IDR')
-                                    ->weight(FontWeight::Bold),
-
-                                TextEntry::make('status')
-                                    ->label('Status')
-                                    ->badge()
-                                    ->color(fn (string $state): string => match ($state) {
-                                        'pending' => 'warning',
-                                        'confirmed' => 'info',
-                                        'processing' => 'primary',
-                                        'shipped' => 'purple',
-                                        'delivered' => 'success',
-                                        'cancelled' => 'danger',
-                                        default => 'gray',
-                                    })
-                                    ->formatStateUsing(fn (string $state): string => ucfirst($state)),
-                            ])
-                            ->columns(4)
-                            ->grid(4)
-                            ->contained(false),
-                    ])
-                    ->collapsible()
-                    ->collapsed(false),
-
-                Section::make('Desain yang Diunggah')
-                    ->schema([
-                        RepeatableEntry::make('designUploads')
-                            ->label('')
-                            ->schema([
-                                TextEntry::make('design_id')
-                                    ->label('Design ID')
-                                    ->badge()
-                                    ->color('info'),
-
-                                TextEntry::make('product.name')
-                                    ->label('Produk')
-                                    ->icon('heroicon-o-cube'),
-
-                                TextEntry::make('file_name')
-                                    ->label('File')
-                                    ->icon('heroicon-o-document')
-                                    ->copyable()
-                                    ->color('primary'),
-
-                                TextEntry::make('upload_date')
-                                    ->label('Tanggal Upload')
-                                    ->date('d M Y')
-                                    ->icon('heroicon-o-calendar'),
-                            ])
-                            ->columns(4)
-                            ->grid(4)
-                            ->contained(false),
-                    ])
-                    ->collapsible()
-                    ->collapsed(true),
-
-                Section::make('Keranjang Belanja')
-                    ->schema([
-                        RepeatableEntry::make('carts')
-                            ->label('')
-                            ->schema([
-                                TextEntry::make('cart_id')
-                                    ->label('Cart ID')
-                                    ->badge(),
-
-                                TextEntry::make('cartItems')
-                                    ->label('Jumlah Item')
-                                    ->getStateUsing(fn ($record) => $record->cartItems()->count())
-                                    ->badge()
-                                    ->color('info'),
-
-                                TextEntry::make('total_price')
-                                    ->label('Total')
-                                    ->money('IDR')
-                                    ->weight(FontWeight::Bold),
-
-                                TextEntry::make('updated_at')
-                                    ->label('Terakhir Update')
-                                    ->dateTime('d M Y, H:i'),
-                            ])
-                            ->columns(4)
-                            ->grid(4)
-                            ->contained(false),
-                    ])
-                    ->collapsible()
-                    ->collapsed(true),
             ]);
     }
 }

@@ -231,3 +231,22 @@ window.addEventListener('load', () => {
         document.body.style.opacity = '1';
     }, 100);
 });
+
+//navbar logout
+document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("userDropdownBtn");
+    const menu = document.getElementById("userDropdownMenu");
+
+    if (btn) {
+        btn.addEventListener("click", () => {
+            menu.classList.toggle("show");
+        });
+
+        // Klik di luar → tutup dropdown
+        document.addEventListener("click", (e) => {
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove("show");
+            }
+        });
+    }
+});
