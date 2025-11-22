@@ -15,10 +15,10 @@
                 Wujudkan Brand Impian Anda dengan Layanan Percetakan & Periklanan Profesional. 
                 Dari Banner, Kartu Undangan, hingga Media Promosi Berkualitas Tinggi.
             </p>
-            <button class="btn-primary" onclick="window.location.href='{{ route('produk') }}'">
+            <a href="{{ route('produk') }}" class="btn-primary">
                 Lihat Produk
                 <i class="fas fa-arrow-right"></i>
-            </button>
+            </a>
         </div>
     </section>
 
@@ -36,7 +36,7 @@
                         <i class="fas fa-flag"></i>
                     </div>
                     <h3>Banner & Spanduk</h3>
-                    <p>Berbagai ukuran dan bahan berkualitas</p>
+                    <p>Berbagai ukuran dan bahan berkualitas tinggi untuk promosi Anda</p>
                 </div>
                 
                 <div class="category-card">
@@ -44,7 +44,7 @@
                         <i class="fas fa-envelope"></i>
                     </div>
                     <h3>Kartu Undangan</h3>
-                    <p>Desain custom dan cetak premium</p>
+                    <p>Desain custom dan cetak premium untuk acara spesial Anda</p>
                 </div>
                 
                 <div class="category-card">
@@ -52,31 +52,7 @@
                         <i class="fas fa-id-card"></i>
                     </div>
                     <h3>Lanyard & ID Card</h3>
-                    <p>Untuk event dan keperluan kantor</p>
-                </div>
-                
-                <div class="category-card">
-                    <div class="category-icon">
-                        <i class="fas fa-store"></i>
-                    </div>
-                    <h3>Booth & Tenda</h3>
-                    <p>Alat peraga promosi profesional</p>
-                </div>
-                
-                <div class="category-card">
-                    <div class="category-icon">
-                        <i class="fas fa-mug-hot"></i>
-                    </div>
-                    <h3>Merchandise</h3>
-                    <p>Botol minum, tumbler, dan aksesoris</p>
-                </div>
-                
-                <div class="category-card">
-                    <div class="category-icon">
-                        <i class="fas fa-tv"></i>
-                    </div>
-                    <h3>Media Digital</h3>
-                    <p>Videotron dan baliho digital</p>
+                    <p>Untuk event, kantor, dan keperluan identifikasi profesional</p>
                 </div>
             </div>
         </div>
@@ -156,8 +132,8 @@
                 <!-- Product 4 -->
                 <div class="product-card">
                     <div class="product-badge sale">Promo</div>
-                    <button class="wishlist-btn active">
-                        <i class="fas fa-heart"></i>
+                    <button class="wishlist-btn">
+                        <i class="far fa-heart"></i>
                     </button>
                     <div class="product-image">
                         <img src="https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?w=400" alt="Tumbler">
@@ -213,75 +189,53 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Product 7 -->
-                <div class="product-card">
-                    <button class="wishlist-btn">
-                        <i class="far fa-heart"></i>
-                    </button>
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1609921212029-bb5a28e60960?w=400" alt="Spanduk">
-                    </div>
-                    <div class="product-info">
-                        <h3>Spanduk Flexi Korea</h3>
-                        <p class="product-desc">Custom ukuran, material premium</p>
-                        <div class="product-footer">
-                            <span class="price">Rp 35.000/m²</span>
-                            <button class="add-to-cart">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product 8 -->
-                <div class="product-card">
-                    <div class="product-badge">Terlaris</div>
-                    <button class="wishlist-btn">
-                        <i class="far fa-heart"></i>
-                    </button>
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=400" alt="Sticker">
-                    </div>
-                    <div class="product-info">
-                        <h3>Sticker Vinyl Cut</h3>
-                        <p class="product-desc">Custom design, tahan lama</p>
-                        <div class="product-footer">
-                            <span class="price">Rp 25.000/m²</span>
-                            <button class="add-to-cart">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
             
             <div class="text-center">
-                <button class="btn-secondary">Lihat Semua Produk</button>
+                <a href="{{ route('produk') }}" class="btn-secondary">Lihat Semua Produk</a>
             </div>
         </div>
     </section>
 
-    <!-- Promo Banner -->
-    <section class="promo-section">
+    <!-- Why Choose Us -->
+    <section class="why-us">
         <div class="container">
-            <div class="promo-grid">
-                <div class="promo-image">
-                    <img src="https://images.unsplash.com/photo-1542744094-3a31f272c490?w=600" alt="Promo">
+            <div class="section-header">
+                <h2>Mengapa Memilih Kami</h2>
+                <p>Komitmen kami untuk memberikan layanan terbaik bagi pelanggan</p>
+            </div>
+            
+            <div class="why-us-grid">
+                <div class="why-us-card">
+                    <div class="why-us-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3>Kualitas Terjamin</h3>
+                    <p>Material premium dan hasil cetak berkualitas tinggi untuk setiap produk</p>
                 </div>
-                <div class="promo-content">
-                    <h2>Dapatkan Penawaran Spesial!</h2>
-                    <p>Desain gratis untuk pemesanan banner dan spanduk di atas 10m². Promo terbatas hanya bulan ini!</p>
-                    <ul class="promo-features">
-                        <li><i class="fas fa-check"></i> Desain gratis oleh tim profesional</li>
-                        <li><i class="fas fa-check"></i> Revisi unlimited hingga puas</li>
-                        <li><i class="fas fa-check"></i> Cetak berkualitas tinggi</li>
-                        <li><i class="fas fa-check"></i> Pengiriman cepat</li>
-                    </ul>
-                    <button class="btn-primary">
-                        Dapatkan Promo
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
+                
+                <div class="why-us-card">
+                    <div class="why-us-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Proses Cepat</h3>
+                    <p>Pengerjaan efisien dengan waktu produksi yang tepat waktu</p>
+                </div>
+                
+                <div class="why-us-card">
+                    <div class="why-us-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Layanan 24/7</h3>
+                    <p>Tim customer service siap membantu Anda kapan saja</p>
+                </div>
+                
+                <div class="why-us-card">
+                    <div class="why-us-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h3>Harga Kompetitif</h3>
+                    <p>Harga terjangkau tanpa mengurangi kualitas produk</p>
                 </div>
             </div>
         </div>
@@ -340,20 +294,6 @@
                         <button class="btn-outline">Jelajahi</button>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Newsletter -->
-    <section class="newsletter">
-        <div class="container">
-            <div class="newsletter-content">
-                <h2>Dapatkan Penawaran Eksklusif</h2>
-                <p>Daftarkan email Anda dan dapatkan info promo, tips branding, dan penawaran spesial langsung ke inbox Anda</p>
-                <form class="newsletter-form">
-                    <input type="email" placeholder="Masukkan email Anda" required>
-                    <button type="submit" class="btn-primary">Berlangganan</button>
-                </form>
             </div>
         </div>
     </section>
