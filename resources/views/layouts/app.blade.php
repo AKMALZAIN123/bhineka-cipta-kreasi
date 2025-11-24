@@ -29,5 +29,43 @@
     @include('partials.footer')
     
     @stack('scripts')
+
+    <script>
+        //navbar search
+        document.addEventListener("DOMContentLoaded", () => {
+            const searchBtn = document.getElementById("searchDropdownBtn");
+            const searchMenu = document.getElementById("searchDropdownMenu");
+
+            if (searchBtn) {
+                searchBtn.addEventListener("click", () => {
+                    searchMenu.classList.toggle("show");
+                });
+
+                document.addEventListener("click", (e) => {
+                    if (!searchBtn.contains(e.target) && !searchMenu.contains(e.target)) {
+                        searchMenu.classList.remove("show");
+                    }
+                });
+            }
+        });
+
+        //navbar logout
+        document.addEventListener("DOMContentLoaded", () => {
+            const btn = document.getElementById("userDropdownBtn");
+            const menu = document.getElementById("userDropdownMenu");
+
+            if (btn) {
+                btn.addEventListener("click", () => {
+                    menu.classList.toggle("show");
+                });
+
+                document.addEventListener("click", (e) => {
+                    if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                        menu.classList.remove("show");
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

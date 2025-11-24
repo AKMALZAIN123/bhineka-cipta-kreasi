@@ -1,303 +1,237 @@
-// Mobile Menu Toggle
+/* =========================================================
+   STOP jika bukan halaman login
+========================================================= */
+const loginForm = document.getElementById("loginForm");
+if (!loginForm) {
+    console.warn("login.js loaded but this page has no loginForm.");
+} else {
+    /* =========================================================
+       ELEMENTS
+    ========================================================= */
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const togglePassword = document.getElementById("togglePassword");
+    const loginBtn = document.getElementById("loginBtn");
+    const btnText = loginBtn?.querySelector(".btn-text");
+    const btnLoader = loginBtn?.querySelector(".btn-loader");
+
+    /* =========================================================
+       NOTIFICATION SYSTEM (1 notif at a time)
+    ========================================================= */
+    function showNotification(message, type = "error") {
+        // Remove old notif
+        document.querySelectorAll(".notification").forEach(n => n.remove());
+
+        const notif = document.createElement("div");
+        notif.className = `notification ${type}`;
+        notif.innerHTML = `
+            <i class="fas ${type === "success" ? "fa-check-circle" : "fa-exclamation-circle"}"></i>
+            <span>${message}</span>
+        `;
+
+        notif.style.cssText = `
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,.15);
+            border-left: 4px solid ${type === "success" ? "#10b981" : "#ef4444"};
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 9999;
+            animation: slideIn .3s ease-out;
+        `;
+        
+        document.body.appendChild(notif);
+
+        setTimeout(() => {
+            notif.style.animation = "slideOut .3s ease-out";
+            setTimeout(() => notif.remove(), 300);
+        }, 3000);
+    }
+
+    // Add animation styles
+    const style = document.createElement("style");
+    style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(300px); opacity: 0; }
+        to   { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to   { transform: translateX(300px); opacity: 0; }
+    }
+    .notification.error {
+        color: #991b1b;
+    }
+    .notification.success {
+        color: #065f46;
+    }
+    .notification i {
+        font-size: 1.2em;
+    }
+    `;
+    document.head.appendChild(style);
+
+    /* =========================================================
+       Password Toggle
+    ========================================================= */
+    function togglePasswordVisibility(input, button) {
+        if (!input || !button) return;
+        
+        const type = input.type === "password" ? "text" : "password";
+        input.type = type;
+
+        const icon = button.querySelector("i");
+        if (icon) {
+            icon.classList.toggle("fa-eye");
+            icon.classList.toggle("fa-eye-slash");
+        }
+    }
+
+    if (togglePassword && passwordInput) {
+        togglePassword.onclick = () =>
+            togglePasswordVisibility(passwordInput, togglePassword);
+    }
+
+    /* =========================================================
+       Validators
+    ========================================================= */
+    function validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function validatePassword(password) {
+        // Minimal 8 karakter (sesuai standar)
+        return password.length >= 8;
+    }
+
+    /* =========================================================
+       Clear Error Messages
+    ========================================================= */
+    function clearErrorMessages() {
+        document.querySelectorAll('.error-message').forEach(el => {
+            el.textContent = '';
+        });
+        document.querySelectorAll('.is-invalid').forEach(el => {
+            el.classList.remove('is-invalid');
+        });
+    }
+
+    /* =========================================================
+       Show Field Error
+    ========================================================= */
+    function showFieldError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.classList.add('is-invalid');
+            const errorSpan = field.parentElement.querySelector('.error-message');
+            if (errorSpan) {
+                errorSpan.textContent = message;
+            }
+        }
+    }
+
+    /* =========================================================
+       FINAL FORM SUBMIT HANDLER
+    ========================================================= */
+    loginForm.addEventListener("submit", (e) => {
+        e.preventDefault(); // stop send dulu untuk validasi
+
+        // Clear previous errors
+        clearErrorMessages();
+        document.querySelectorAll('.notification').forEach(n => n.remove());
+
+        const email = emailInput?.value.trim() || '';
+        const pass = passwordInput?.value || '';
+
+        let hasError = false;
+
+        // VALIDASI EMAIL
+        if (!email) {
+            showFieldError('email', 'Email wajib diisi');
+            showNotification('Email wajib diisi');
+            hasError = true;
+        } else if (!validateEmail(email)) {
+            showFieldError('email', 'Format email tidak valid');
+            if (!hasError) showNotification('Format email tidak valid');
+            hasError = true;
+        }
+
+        // VALIDASI PASSWORD
+        if (!pass) {
+            showFieldError('password', 'Password wajib diisi');
+            if (!hasError) showNotification('Password wajib diisi');
+            hasError = true;
+        } else if (!validatePassword(pass)) {
+            showFieldError('password', 'Password minimal 8 karakter');
+            if (!hasError) showNotification('Password minimal 8 karakter');
+            hasError = true;
+        }
+
+        // Jika ada error, stop
+        if (hasError) {
+            return false;
+        }
+
+        // VALID → Show loading & submit ke Laravel
+        if (btnText && btnLoader && loginBtn) {
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline-block';
+            loginBtn.disabled = true;
+        }
+
+        // Submit form
+        loginForm.submit();
+    });
+
+    /* =========================================================
+       Handle Backend Errors (dari Laravel session)
+    ========================================================= */
+    const backendEmailError = emailInput?.getAttribute("data-backend-error");
+    const backendPasswordError = passwordInput?.getAttribute("data-backend-error");
+
+    if (backendEmailError) {
+        showNotification(backendEmailError, "error");
+        showFieldError("email", backendEmailError);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    if (backendPasswordError) {
+        showNotification(backendPasswordError, "error");
+        showFieldError("password", backendPasswordError);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    /* =========================================================
+       Real-time Validation (Optional - untuk UX lebih baik)
+    ========================================================= */
+    
+    // Clear error on input
+    [emailInput, passwordInput].forEach(input => {
+        if (input) {
+            input.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+                const errorSpan = this.parentElement.querySelector('.error-message');
+                if (errorSpan) {
+                    errorSpan.textContent = '';
+                }
+            });
+        }
+    });
+}
+
+/* =========================================================
+   Mobile Menu Toggle (jika ada)
+========================================================= */
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const navLinks = document.getElementById('navLinks');
 
-if (mobileMenuBtn) {
+if (mobileMenuBtn && navLinks) {
     mobileMenuBtn.addEventListener('click', () => {
         navLinks.classList.toggle('active');
     });
 }
-
-// Toggle Password Visibility
-const togglePassword = document.getElementById('togglePassword');
-const passwordInput = document.getElementById('password');
-
-togglePassword.addEventListener('click', () => {
-    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', type);
-    
-    const icon = togglePassword.querySelector('i');
-    if (type === 'text') {
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-    } else {
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-    }
-});
-
-// Form Validation
-const loginForm = document.getElementById('loginForm');
-const emailInput = document.getElementById('email');
-const emailError = document.getElementById('emailError');
-const passwordError = document.getElementById('passwordError');
-const loginBtn = document.getElementById('loginBtn');
-
-// Email Validation
-function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
-
-// Real-time Email Validation
-emailInput.addEventListener('blur', () => {
-    if (!emailInput.value) {
-        showError(emailInput, emailError, 'Email tidak boleh kosong');
-    } else if (!validateEmail(emailInput.value)) {
-        showError(emailInput, emailError, 'Format email tidak valid');
-    } else {
-        clearError(emailInput, emailError);
-    }
-});
-
-// Real-time Password Validation
-passwordInput.addEventListener('blur', () => {
-    if (!passwordInput.value) {
-        showError(passwordInput, passwordError, 'Password tidak boleh kosong');
-    } else if (passwordInput.value.length < 6) {
-        showError(passwordInput, passwordError, 'Password minimal 6 karakter');
-    } else {
-        clearError(passwordInput, passwordError);
-    }
-});
-
-// Show Error
-function showError(input, errorElement, message) {
-    input.parentElement.classList.add('error');
-    errorElement.textContent = message;
-    errorElement.classList.add('show');
-}
-
-// Clear Error
-function clearError(input, errorElement) {
-    input.parentElement.classList.remove('error');
-    errorElement.textContent = '';
-    errorElement.classList.remove('show');
-}
-
-// Form Submit
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    // Clear previous errors
-    clearError(emailInput, emailError);
-    clearError(passwordInput, passwordError);
-    
-    // Validate
-    let isValid = true;
-    
-    if (!emailInput.value) {
-        showError(emailInput, emailError, 'Email tidak boleh kosong');
-        isValid = false;
-    } else if (!validateEmail(emailInput.value)) {
-        showError(emailInput, emailError, 'Format email tidak valid');
-        isValid = false;
-    }
-    
-    if (!passwordInput.value) {
-        showError(passwordInput, passwordError, 'Password tidak boleh kosong');
-        isValid = false;
-    } else if (passwordInput.value.length < 6) {
-        showError(passwordInput, passwordError, 'Password minimal 6 karakter');
-        isValid = false;
-    }
-    
-    if (!isValid) return;
-    
-    // Show loading
-    const btnText = loginBtn.querySelector('.btn-text');
-    const btnLoader = loginBtn.querySelector('.btn-loader');
-    btnText.style.display = 'none';
-    btnLoader.style.display = 'inline-block';
-    loginBtn.disabled = true;
-    
-    // Simulate API call (replace with real API)
-    try {
-        const response = await mockLogin(emailInput.value, passwordInput.value);
-        
-        if (response.success) {
-            // Save token/user data
-            localStorage.setItem('user', JSON.stringify(response.user));
-            localStorage.setItem('token', response.token);
-            
-            // Show success notification
-            showNotification('Login berhasil! Mengalihkan...', 'success');
-            
-            // Redirect after 1 second
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1000);
-        } else {
-            throw new Error(response.message);
-        }
-    } catch (error) {
-        // Show error
-        showNotification(error.message || 'Login gagal. Silakan coba lagi.', 'error');
-        
-        // Reset button
-        btnText.style.display = 'inline-block';
-        btnLoader.style.display = 'none';
-        loginBtn.disabled = false;
-    }
-});
-
-// Mock Login API (Replace with real API call)
-async function mockLogin(email, password) {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Demo account
-    if (email === 'email@demo.com' && password === 'demo123') {
-        return {
-            success: true,
-            token: 'demo-token-' + Date.now(),
-            user: {
-                id: 1,
-                name: 'Demo User',
-                email: email
-            }
-        };
-    }
-    
-    // Failed login
-    return {
-        success: false,
-        message: 'Email atau password salah'
-    };
-}
-
-/* 
-REAL API INTEGRATION EXAMPLE:
-Replace mockLogin with real API call:
-
-async function loginAPI(email, password) {
-    const response = await fetch('https://your-api.com/auth/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password })
-    });
-    
-    if (!response.ok) {
-        throw new Error('Login gagal');
-    }
-    
-    return await response.json();
-}
-*/
-
-// Social Login Handlers
-const googleBtn = document.querySelector('.google-btn');
-const facebookBtn = document.querySelector('.facebook-btn');
-
-googleBtn.addEventListener('click', () => {
-    showNotification('Fitur login dengan Google akan segera hadir!', 'info');
-    // TODO: Implement Google OAuth
-});
-
-facebookBtn.addEventListener('click', () => {
-    showNotification('Fitur login dengan Facebook akan segera hadir!', 'info');
-    // TODO: Implement Facebook OAuth
-});
-
-// Notification Function
-function showNotification(message, type = 'info') {
-    // Remove existing notification
-    const existingNotif = document.querySelector('.notification');
-    if (existingNotif) {
-        existingNotif.remove();
-    }
-    
-    // Create notification
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    
-    let icon = 'fa-info-circle';
-    let bgColor = '#2563eb';
-    
-    if (type === 'success') {
-        icon = 'fa-check-circle';
-        bgColor = '#10b981';
-    } else if (type === 'error') {
-        icon = 'fa-exclamation-circle';
-        bgColor = '#ef4444';
-    }
-    
-    notification.innerHTML = `
-        <i class="fas ${icon}"></i>
-        <span>${message}</span>
-    `;
-    
-    // Add styles
-    notification.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        background: white;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        z-index: 9999;
-        animation: slideIn 0.3s ease-out;
-        border-left: 4px solid ${bgColor};
-    `;
-    
-    const notifIcon = notification.querySelector('i');
-    notifIcon.style.color = bgColor;
-    notifIcon.style.fontSize = '1.5rem';
-    
-    const notifText = notification.querySelector('span');
-    notifText.style.color = '#1f2937';
-    notifText.style.fontWeight = '500';
-    
-    document.body.appendChild(notification);
-    
-    // Auto remove after 3 seconds
-    setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => {
-            notification.remove();
-        }, 300);
-    }, 3000);
-}
-
-// Add animation styles
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    
-    @keyframes slideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);
-
-// Check if user already logged in
-window.addEventListener('load', () => {
-    const user = localStorage.getItem('user');
-    if (user) {
-        // User already logged in, redirect to homepage or account page
-        // Uncomment if you want auto redirect
-        // window.location.href = 'index.html';
-    }
-});

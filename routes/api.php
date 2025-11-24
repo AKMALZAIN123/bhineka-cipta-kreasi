@@ -10,10 +10,11 @@ require __DIR__.'/auth.php';
 
 // Product routes (public)
 Route::prefix('products')->group(function () {
-    Route::get('/', [ProductController::class, 'index']);
-    Route::get('/search', [ProductController::class, 'search']); 
-    Route::get('/filter', [ProductController::class, 'filter']); 
-    Route::get('/{id}', [ProductController::class, 'show']); 
+    Route::get('/', [ProductController::class, 'index'])->name('api.products.index');
+    Route::get('/categories', [ProductController::class, 'categories'])->name('api.products.categories');
+    Route::get('/search', [ProductController::class, 'search'])->name('api.products.search');
+    Route::get('/filter', [ProductController::class, 'filter'])->name('api.products.filter');
+    Route::get('/{id}', [ProductController::class, 'show'])->name('api.products.show');
 });
 
 // middleware protected routes

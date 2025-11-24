@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Helpers\ApiResponseHelper;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
 {
@@ -15,28 +18,29 @@ class OrderController extends Controller
      * Checkout - Create order from cart
      * POST /api/orders/checkout
      * Body: { alamat, no_telp }
+     *
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function checkout(Request $request)
+    public function checkout(Request $request): JsonResponse
     {
-        $request->validate([
-            'alamat' => 'required|string',
-            'no_telp' => 'required|string|max:15',
-        ]);
-
-        $user = $request->user();
-
-        // Get user's cart
-        $cart = Cart::where('user_id', $user->user_id)->first();
-
-        if (!$cart || $cart->cartItems->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cart is empty',
-            ], 400);
-        }
-
-        DB::beginTransaction();
         try {
+            $request->validate([
+                'alamat' => 'required|string|max:500',
+                'no_telp' => 'required|string|max:15',
+            ]);
+
+            $user = $request->user();
+
+            // Get user's cart
+            $cart = Cart::where('user_id', $user->user_id)->first();
+
+            if (!$cart || $cart->cartItems->isEmpty()) {
+                return ApiResponseHelper::error('Cart is empty', 400);
+            }
+
+            DB::beginTransaction();
+
             // Create order
             $order = Order::create([
                 'user_id' => $user->user_id,
@@ -66,38 +70,40 @@ class OrderController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Order created successfully',
-                'data' => [
-                    'order_id' => $order->order_id,
-                    'order_date' => $order->order_date->format('Y-m-d'),
-                    'alamat' => $order->alamat,
-                    'no_telp' => $order->no_telp,
-                    'status' => $order->status,
-                    'items' => $order->orderItems->map(function ($item) {
-                        return [
-                            'product' => [
-                                'product_id' => $item->product->product_id,
-                                'name' => $item->product->name,
-                                'category' => $item->product->category,
-                                'price' => $item->product->price,
-                            ],
-                            'quantity' => $item->quantity,
-                            'sub_total' => $item->sub_total,
-                        ];
-                    }),
-                    'total_amount' => $order->total_amount,
-                ],
-            ], 201);
+            $data = [
+                'order_id' => $order->order_id,
+                'order_date' => $order->order_date->format('Y-m-d'),
+                'alamat' => $order->alamat,
+                'no_telp' => $order->no_telp,
+                'status' => $order->status,
+                'items' => $order->orderItems->map(function ($item) {
+                    return [
+                        'product' => [
+                            'product_id' => $item->product->product_id,
+                            'name' => $item->product->name,
+                            'category' => $item->product->category,
+                            'price' => $item->product->price,
+                        ],
+                        'quantity' => $item->quantity,
+                        'sub_total' => $item->sub_total,
+                    ];
+                }),
+                'total_amount' => $order->total_amount,
+            ];
 
+            return ApiResponseHelper::success($data, 'Order created successfully', 201);
+
+        } catch (ValidationException $e) {
+            return ApiResponseHelper::validationError(
+                $e->errors(),
+                'Invalid checkout data'
+            );
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to create order',
-                'error' => $e->getMessage(),
-            ], 500);
+            return ApiResponseHelper::serverError(
+                'Failed to create order',
+                $e->getMessage()
+            );
         }
     }
 
@@ -105,27 +111,34 @@ class OrderController extends Controller
      * Get order history
      * GET /api/orders
      * Query params: status, per_page
+     *
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function history(Request $request)
+    public function history(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $perPage = $request->input('per_page', 10);
-        $status = $request->input('status');
+        try {
+            $request->validate([
+                'status' => 'nullable|in:pending,confirmed,processing,shipped,delivered,cancelled',
+                'per_page' => 'nullable|integer|min:1|max:100',
+            ]);
 
-        $query = Order::where('user_id', $user->user_id)
-            ->with(['orderItems.product']);
+            $user = $request->user();
+            $perPage = $request->input('per_page', 10);
+            $status = $request->input('status');
 
-        if ($status) {
-            $query->where('status', $status);
-        }
+            $query = Order::where('user_id', $user->user_id)
+                ->with(['orderItems.product']);
 
-        $orders = $query->orderBy('order_date', 'desc')
-            ->paginate($perPage);
+            if ($status) {
+                $query->where('status', $status);
+            }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Order history retrieved successfully',
-            'data' => $orders->map(function ($order) {
+            $orders = $query->orderBy('order_date', 'desc')
+                ->paginate($perPage);
+
+            // Transform data
+            $transformedOrders = $orders->getCollection()->map(function ($order) {
                 return [
                     'order_id' => $order->order_id,
                     'order_date' => $order->order_date->format('Y-m-d'),
@@ -135,40 +148,51 @@ class OrderController extends Controller
                     'alamat' => $order->alamat,
                     'no_telp' => $order->no_telp,
                 ];
-            }),
-            'pagination' => [
-                'current_page' => $orders->currentPage(),
-                'per_page' => $orders->perPage(),
-                'total' => $orders->total(),
-                'last_page' => $orders->lastPage(),
-            ],
-        ]);
+            });
+
+            $orders->setCollection($transformedOrders);
+
+            return ApiResponseHelper::successWithPagination(
+                $orders,
+                'Order history retrieved successfully'
+            );
+
+        } catch (ValidationException $e) {
+            return ApiResponseHelper::validationError(
+                $e->errors(),
+                'Invalid filter parameters'
+            );
+        } catch (\Exception $e) {
+            return ApiResponseHelper::serverError(
+                'Failed to retrieve order history',
+                $e->getMessage()
+            );
+        }
     }
 
     /**
      * Get order detail
      * GET /api/orders/{orderId}
+     *
+     * @param Request $request
+     * @param int $orderId
+     * @return JsonResponse
      */
-    public function detail(Request $request, $orderId)
+    public function detail(Request $request, int $orderId): JsonResponse
     {
-        $user = $request->user();
+        try {
+            $user = $request->user();
 
-        $order = Order::where('user_id', $user->user_id)
-            ->where('order_id', $orderId)
-            ->with(['orderItems.product', 'user'])
-            ->first();
+            $order = Order::where('user_id', $user->user_id)
+                ->where('order_id', $orderId)
+                ->with(['orderItems.product', 'user'])
+                ->first();
 
-        if (!$order) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Order not found',
-            ], 404);
-        }
+            if (!$order) {
+                return ApiResponseHelper::notFound('Order not found');
+            }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Order detail retrieved successfully',
-            'data' => [
+            $data = [
                 'order_id' => $order->order_id,
                 'order_date' => $order->order_date->format('Y-m-d'),
                 'status' => $order->status,
@@ -198,60 +222,81 @@ class OrderController extends Controller
                 ],
                 'created_at' => $order->created_at->format('Y-m-d H:i:s'),
                 'updated_at' => $order->updated_at->format('Y-m-d H:i:s'),
-            ],
-        ]);
+            ];
+
+            return ApiResponseHelper::success($data, 'Order detail retrieved successfully');
+
+        } catch (\Exception $e) {
+            return ApiResponseHelper::serverError(
+                'Failed to retrieve order detail',
+                $e->getMessage()
+            );
+        }
     }
 
     /**
      * Cancel order
      * POST /api/orders/{orderId}/cancel
+     *
+     * @param Request $request
+     * @param int $orderId
+     * @return JsonResponse
      */
-    public function cancel(Request $request, $orderId)
+    public function cancel(Request $request, int $orderId): JsonResponse
     {
-        $user = $request->user();
-
-        $order = Order::where('user_id', $user->user_id)
-            ->where('order_id', $orderId)
-            ->first();
-
-        if (!$order) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Order not found',
-            ], 404);
-        }
-
-        // Only allow cancellation for pending and confirmed orders
-        if (!in_array($order->status, ['pending', 'confirmed'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Order cannot be cancelled. Current status: ' . $order->status,
-            ], 400);
-        }
-
-        DB::beginTransaction();
         try {
+            $user = $request->user();
+
+            $order = Order::where('user_id', $user->user_id)
+                ->where('order_id', $orderId)
+                ->first();
+
+            if (!$order) {
+                return ApiResponseHelper::notFound('Order not found');
+            }
+
+            // Only allow cancellation for pending and confirmed orders
+            if (!in_array($order->status, ['pending', 'confirmed'])) {
+                return ApiResponseHelper::error(
+                    'Order cannot be cancelled. Current status: ' . $order->status,
+                    400
+                );
+            }
+
+            DB::beginTransaction();
+
             $order->status = 'cancelled';
             $order->save();
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Order cancelled successfully',
-                'data' => [
-                    'order_id' => $order->order_id,
-                    'status' => $order->status,
-                ],
-            ]);
+            $data = [
+                'order_id' => $order->order_id,
+                'status' => $order->status,
+                'cancelled_at' => now()->format('Y-m-d H:i:s'),
+            ];
+
+            return ApiResponseHelper::success($data, 'Order cancelled successfully');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to cancel order',
-                'error' => $e->getMessage(),
-            ], 500);
+            return ApiResponseHelper::serverError(
+                'Failed to cancel order',
+                $e->getMessage()
+            );
         }
+    }
+
+    /**
+     * Get order by ID (alias for detail)
+     * GET /api/orders/show/{orderId}
+     *
+     * @param Request $request
+     * @param int $orderId
+     * @return JsonResponse
+     */
+    public function show(Request $request, int $orderId): JsonResponse
+    {
+        return $this->detail($request, $orderId);
     }
 }
