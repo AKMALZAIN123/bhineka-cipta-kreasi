@@ -6,6 +6,34 @@ mobileMenuBtn.addEventListener('click', () => {
     navLinks.classList.toggle('active');
 });
 
+// Add to Cart
+const addToCartBtns = document.querySelectorAll('.add-to-cart');
+addToCartBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const isAuth = btn.getAttribute('data-auth') === "true";
+        const form = btn.closest('.cart-form');
+
+        if (!isAuth) {
+            showNotification('Anda belum login, mengalihkan ke halaman login...', 'error');
+
+            setTimeout(() => {
+                window.location.href = "/login";
+            }, 2000);
+
+        } else {
+            form.submit();
+            
+            btn.style.transform = 'scale(0.9)';
+            setTimeout(() => { btn.style.transform = 'scale(1.1)'; }, 100);
+            setTimeout(() => { btn.style.transform = 'scale(1)'; }, 200);
+
+            showNotification('Produk berhasil ditambahkan ke keranjang!', 'success');
+        }
+    });
+});
+
 // Wishlist Toggle
 const wishlistBtns = document.querySelectorAll('.wishlist-btn');
 wishlistBtns.forEach(btn => {
@@ -20,31 +48,6 @@ wishlistBtns.forEach(btn => {
             icon.classList.remove('fas');
             icon.classList.add('far');
         }
-    });
-});
-
-// Add to Cart
-const addToCartBtns = document.querySelectorAll('.add-to-cart');
-const cartBadge = document.querySelector('.cart-badge');
-let cartCount = 0;
-
-addToCartBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        cartCount++;
-        cartBadge.textContent = cartCount;
-        
-        // Visual feedback
-        btn.style.transform = 'scale(0.9)';
-        setTimeout(() => {
-            btn.style.transform = 'scale(1.1)';
-        }, 100);
-        setTimeout(() => {
-            btn.style.transform = 'scale(1)';
-        }, 200);
-        
-        // Show notification
-        showNotification('Produk berhasil ditambahkan ke keranjang!');
     });
 });
 
@@ -91,21 +94,30 @@ collectionCards.forEach(card => {
 
 // Notification Function
 function showNotification(message, type = 'info') {
-    // Remove existing notification
     const existingNotif = document.querySelector('.notification');
     if (existingNotif) {
         existingNotif.remove();
     }
     
-    // Create notification
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
+    
+    let icon = 'fa-info-circle';
+    let bgColor = '#2563eb';
+    
+    if (type === 'success') {
+        icon = 'fa-check-circle';
+        bgColor = '#10b981';
+    } else if (type === 'error') {
+        icon = 'fa-exclamation-circle';
+        bgColor = '#ef4444';
+    }
+    
     notification.innerHTML = `
-        <i class="fas fa-check-circle"></i>
+        <i class="fas ${icon}"></i>
         <span>${message}</span>
     `;
     
-    // Add styles
     notification.style.cssText = `
         position: fixed;
         top: 100px;
@@ -119,11 +131,19 @@ function showNotification(message, type = 'info') {
         gap: 1rem;
         z-index: 9999;
         animation: slideIn 0.3s ease-out;
+        border-left: 4px solid ${bgColor};
     `;
+    
+    const notifIcon = notification.querySelector('i');
+    notifIcon.style.color = bgColor;
+    notifIcon.style.fontSize = '1.5rem';
+    
+    const notifText = notification.querySelector('span');
+    notifText.style.color = '#1f2937';
+    notifText.style.fontWeight = '500';
     
     document.body.appendChild(notification);
     
-    // Auto remove after 3 seconds
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease-out';
         setTimeout(() => {
@@ -230,23 +250,4 @@ window.addEventListener('load', () => {
         document.body.style.transition = 'opacity 0.5s';
         document.body.style.opacity = '1';
     }, 100);
-});
-
-//navbar logout
-document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("userDropdownBtn");
-    const menu = document.getElementById("userDropdownMenu");
-
-    if (btn) {
-        btn.addEventListener("click", () => {
-            menu.classList.toggle("show");
-        });
-
-        // Klik di luar → tutup dropdown
-        document.addEventListener("click", (e) => {
-            if (!btn.contains(e.target) && !menu.contains(e.target)) {
-                menu.classList.remove("show");
-            }
-        });
-    }
 });

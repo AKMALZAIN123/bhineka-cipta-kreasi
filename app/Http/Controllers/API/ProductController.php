@@ -4,130 +4,169 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Helpers\ApiResponseHelper;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
     /**
-     * Get all products with pagination
+     * Display a listing of the resource.
      * GET /api/products
-     * Query params: per_page (default: 10)
+     *
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = $request->input('per_page', 10);
+        try {
+            $perPage = $request->input('per_page', 10);
+            
+            $products = Product::latest()->paginate($perPage);
 
-        $products = Product::paginate($perPage);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Products retrieved successfully',
-            'data' => $products->items(),
-            'pagination' => [
-                'current_page' => $products->currentPage(),
-                'per_page' => $products->perPage(),
-                'total' => $products->total(),
-                'last_page' => $products->lastPage(),
-            ],
-        ]);
-    }
-
-    /**
-     * Get product detail
-     * GET /api/products/{id}
-     */
-    public function show($id)
-    {
-        $product = Product::find($id);
-
-        if (!$product) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Product not found',
-            ], 404);
+            return ApiResponseHelper::successWithPagination(
+                $products,
+                'Products retrieved successfully'
+            );
+        } catch (\Exception $e) {
+            return ApiResponseHelper::serverError(
+                'Failed to retrieve products',
+                $e->getMessage()
+            );
         }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Product retrieved successfully',
-            'data' => $product,
-        ]);
     }
 
     /**
-     * Search products by name
-     * GET /api/products/search?q=keyword
+     * Display the specified resource.
+     * GET /api/products/{id}
+     *
+     * @param int $id
+     * @return JsonResponse
      */
-    public function search(Request $request)
+    public function show(int $id): JsonResponse
     {
-        $request->validate([
-            'q' => 'required|string|min:1',
-        ]);
+        try {
+            $product = Product::find($id);
 
-        $keyword = $request->input('q');
-        $perPage = $request->input('per_page', 10);
+            if (!$product) {
+                return ApiResponseHelper::notFound('Product not found');
+            }
 
-        $products = Product::where('name', 'like', "%{$keyword}%")
-            ->orWhere('description', 'like', "%{$keyword}%")
-            ->paginate($perPage);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Search results retrieved successfully',
-            'data' => $products->items(),
-            'pagination' => [
-                'current_page' => $products->currentPage(),
-                'per_page' => $products->perPage(),
-                'total' => $products->total(),
-                'last_page' => $products->lastPage(),
-            ],
-        ]);
+            return ApiResponseHelper::success(
+                $product,
+                'Product retrieved successfully'
+            );
+        } catch (\Exception $e) {
+            return ApiResponseHelper::serverError(
+                'Failed to retrieve product',
+                $e->getMessage()
+            );
+        }
     }
 
     /**
-     * Filter products by category
-     * GET /api/products/filter?category=Clothing
-     * Multiple categories: ?category=Clothing,Drinkware
+     * Search products by keyword.
+     * GET /api/products/search?q=keyword&per_page=10
+     *
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function filter(Request $request)
+    public function search(Request $request): JsonResponse
     {
-        $request->validate([
-            'category' => 'required|string',
-        ]);
+        try {
+            $request->validate([
+                'q' => 'required|string|min:1|max:255',
+                'per_page' => 'nullable|integer|min:1|max:100',
+            ]);
 
-        $categories = explode(',', $request->input('category'));
-        $perPage = $request->input('per_page', 10);
+            $keyword = $request->input('q');
+            $perPage = $request->input('per_page', 10);
 
-        $products = Product::whereIn('category', $categories)
-            ->paginate($perPage);
+            $products = Product::where('name', 'like', "%{$keyword}%")
+                ->orWhere('description', 'like', "%{$keyword}%")
+                ->latest()
+                ->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Filtered products retrieved successfully',
-            'data' => $products->items(),
-            'pagination' => [
-                'current_page' => $products->currentPage(),
-                'per_page' => $products->perPage(),
-                'total' => $products->total(),
-                'last_page' => $products->lastPage(),
-            ],
-        ]);
+            return ApiResponseHelper::successWithPagination(
+                $products,
+                "Search results for '{$keyword}'"
+            );
+        } catch (ValidationException $e) {
+            return ApiResponseHelper::validationError(
+                $e->errors(),
+                'Invalid search parameters'
+            );
+        } catch (\Exception $e) {
+            return ApiResponseHelper::serverError(
+                'Failed to search products',
+                $e->getMessage()
+            );
+        }
     }
 
     /**
-     * Get available categories
+     * Filter products by categories.
+     * GET /api/products/filter?category=Clothing,Drinkware&per_page=10
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function filter(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'category' => 'required|string|max:500',
+                'per_page' => 'nullable|integer|min:1|max:100',
+            ]);
+
+            $categories = array_map('trim', explode(',', $request->input('category')));
+            $perPage = $request->input('per_page', 10);
+
+            $products = Product::whereIn('category', $categories)
+                ->latest()
+                ->paginate($perPage);
+
+            return ApiResponseHelper::successWithPagination(
+                $products,
+                'Filtered products retrieved successfully'
+            );
+        } catch (ValidationException $e) {
+            return ApiResponseHelper::validationError(
+                $e->errors(),
+                'Invalid filter parameters'
+            );
+        } catch (\Exception $e) {
+            return ApiResponseHelper::serverError(
+                'Failed to filter products',
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Get all available categories.
      * GET /api/products/categories
+     *
+     * @return JsonResponse
      */
-    public function categories()
+    public function categories(): JsonResponse
     {
-        $categories = Product::select('category')
-            ->distinct()
-            ->pluck('category');
+        try {
+            $categories = Product::select('category')
+                ->distinct()
+                ->orderBy('category')
+                ->pluck('category');
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Categories retrieved successfully',
-            'data' => $categories,
-        ]);
+            return ApiResponseHelper::success(
+                $categories,
+                'Categories retrieved successfully'
+            );
+        } catch (\Exception $e) {
+            return ApiResponseHelper::serverError(
+                'Failed to retrieve categories',
+                $e->getMessage()
+            );
+        }
     }
 }

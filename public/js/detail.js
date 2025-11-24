@@ -382,39 +382,31 @@ qtyInput.addEventListener('change', () => {
 
 // Add to Cart
 const btnAddCart = document.getElementById('btnAddCart');
-const cartBadge = document.querySelector('.cart-badge');
-let cartCount = parseInt(cartBadge.textContent) || 0;
 
 btnAddCart.addEventListener('click', () => {
     const quantity = parseInt(qtyInput.value);
-    
-    // Prepare cart item
-    const cartItem = {
-        id: productData.id,
-        name: productData.name,
-        price: calculateCurrentPrice(),
-        quantity: quantity,
-        variants: selectedVariants,
-        image: productData.images[0]
-    };
-    
-    // Save to localStorage
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    cart.push(cartItem);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    
-    // Update badge
-    cartCount += quantity;
-    cartBadge.textContent = cartCount;
-    
-    // Visual feedback
-    btnAddCart.innerHTML = '<i class="fas fa-check"></i> Ditambahkan!';
+
+    const isAuth = btnAddCart.getAttribute('data-auth') === "true";
+    const form = btnAddCart.closest('.cart-form');
+
+    if (!isAuth) {
+        showNotification('Anda belum login, mengalihkan ke halaman login...', 'error');
+        setTimeout(() => window.location.href = "/login", 2000);
+        return;
+    }
+
+    // Submit backend cart form
+    form.submit();
+
+    // Visual Only (UI Feedback)
+    btnAddCart.innerHTML = `<i class="fas fa-check"></i> Ditambahkan!`;
     setTimeout(() => {
-        btnAddCart.innerHTML = '<i class="fas fa-shopping-cart"></i> Tambah ke Keranjang';
-    }, 2000);
-    
+        btnAddCart.innerHTML = `<i class="fas fa-shopping-cart"></i> Tambah ke Keranjang`;
+    }, 1800);
+
     showNotification(`${quantity} produk ditambahkan ke keranjang!`, 'success');
 });
+
 
 // Buy Now
 const btnBuyNow = document.getElementById('btnBuyNow');

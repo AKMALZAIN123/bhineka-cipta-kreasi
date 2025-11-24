@@ -15,13 +15,23 @@
                 </div>
                 
                 <div class="nav-actions">
-                    <button class="icon-btn">
+                    <button class="icon-btn dropdown-toggle" id="searchDropdownBtn">
                         <i class="fas fa-search"></i>
                     </button>
+                    
+                    <div class="dropdown-menu" id="searchDropdownMenu">
+                        <form action="{{ route('produk') }}" method="GET">
+                            <input type="text" name="search" class="search-input" placeholder="Cari produk..." autofocus>
+                        </form>
+                    </div>
 
                     <button class="icon-btn cart-btn">
                         <i class="fas fa-shopping-cart" onclick="window.location.href='{{ route('cart') }}'"></i>
-                        <span class="cart-badge">0</span>
+                        <span class="cart-badge">
+                            {{ auth()->check() ? \App\Models\CartItem::whereHas('cart', function($query) {
+                                $query->where('user_id', auth()->user()->user_id);
+                            })->sum('quantity') : 0 }}
+                        </span>
                     </button>
 
                     @guest

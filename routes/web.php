@@ -4,10 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\CartWebController;
 
 // Public pages
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/produk', [HomeController::class, 'produk'])->name('produk');
+Route::get('/produk/{id}', [HomeController::class, 'detail'])->name('produk.detail');
 Route::get('/tentang', [HomeController::class, 'tentang'])->name('tentang');
 Route::get('/kontak', [HomeController::class, 'kontak'])->name('kontak');
 Route::get('/detail', [HomeController::class, 'detail'])->name('detail');
@@ -17,7 +19,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', function () {
         return view('regis'); 
     })->name('register.form');
-
+    
     Route::get('/login', function () {
         return view('login');
     })->name('login.form');
@@ -30,6 +32,10 @@ Route::middleware('guest')->group(function () {
 // Protected pages - untuk user yang sudah login
 Route::middleware('auth')->group(function () {
     Route::get('/cart', [HomeController::class, 'cart'])->name('cart');
+    Route::post('/cart/add', [CartWebController::class, 'add'])->name('cart.add');
+    Route::post('/cart/update/{id}', [CartWebController::class, 'update'])->name('cart.update');
+    Route::post('/cart/delete/{id}', [CartWebController::class, 'delete'])->name('cart.delete');
+    
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
     Route::get('/orders', [HomeController::class, 'orders'])->name('orders');
     

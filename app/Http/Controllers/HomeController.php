@@ -2,19 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        return view('home');
+        $products = Product::latest()
+            ->take(6) 
+            ->get();
+
+        return view('home', compact('products'));
     }
 
-    public function produk()
+    public function detail($id)
     {
-        return view('produk');
+        $product = Product::findOrFail($id);
+
+        return view('detail', compact('product'));
     }
+
+    public function produk(Request $request)
+    {
+        $query = Product::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('description', 'like', '%' . $request->search . '%');
+        }
+
+        $products = $query->latest()->paginate(12);
+        return view('produk', compact('products'));
+    }
+
 
     public function tentang()
     {
@@ -26,15 +48,19 @@ class HomeController extends Controller
         return view('kontak');
     }
 
-    public function detail()
-    {
-        return view('detail');
-    }
-
     // Protected routes
     public function cart()
     {
-        return view('cart');
+        $user = auth()->user();
+
+        $cart = Cart::with(['cartItems.product'])
+                ->where('user_id', $user->user_id)
+                ->first();
+
+        return view('cart', [
+            'cart' => $cart,
+            'items' => $cart ? $cart->cartItems : collect()
+        ]);
     }
 
     public function dashboard()

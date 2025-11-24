@@ -67,129 +67,53 @@
             </div>
             
             <div class="product-grid">
-                <!-- Product 1 -->
+                @foreach ($products as $product)
                 <div class="product-card">
-                    <div class="product-badge">Baru</div>
-                    <button class="wishlist-btn">
-                        <i class="far fa-heart"></i>
-                    </button>
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1611329857570-f02f340e7378?w=400" alt="Banner X">
-                    </div>
-                    <div class="product-info">
-                        <h3>Banner X Premium</h3>
-                        <p class="product-desc">Ukuran 160x60cm, Material Premium</p>
-                        <div class="product-footer">
-                            <span class="price">Rp 125.000</span>
-                            <button class="add-to-cart">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                    @if($product->badge)
+                        <div class="product-badge">{{ $product->badge }}</div>
+                    @endif
 
-                <!-- Product 2 -->
-                <div class="product-card">
-                    <div class="product-badge">Populer</div>
                     <button class="wishlist-btn">
                         <i class="far fa-heart"></i>
                     </button>
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1530435460869-d13625c69bbf?w=400" alt="Kartu Undangan">
-                    </div>
-                    <div class="product-info">
-                        <h3>Kartu Undangan Custom</h3>
-                        <p class="product-desc">Desain custom, cetak 100 pcs</p>
-                        <div class="product-footer">
-                            <span class="price">Rp 350.000</span>
-                            <button class="add-to-cart">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Product 3 -->
-                <div class="product-card">
-                    <button class="wishlist-btn">
-                        <i class="far fa-heart"></i>
-                    </button>
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400" alt="Lanyard">
-                    </div>
-                    <div class="product-info">
-                        <h3>Lanyard Custom Logo</h3>
-                        <p class="product-desc">Print sublim, minimal order 50 pcs</p>
-                        <div class="product-footer">
-                            <span class="price">Rp 15.000</span>
-                            <button class="add-to-cart">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
+                    <a href="{{ route('produk.detail', $product->product_id) }}">
+                        <div class="product-image">
+                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
                         </div>
-                    </div>
-                </div>
+                     </a>
+                        <div class="product-info">
+                            <h3>{{ $product->name }}</h3>
+                            <p class="product-desc">{{ $product->description }}</p>
 
-                <!-- Product 4 -->
-                <div class="product-card">
-                    <div class="product-badge sale">Promo</div>
-                    <button class="wishlist-btn">
-                        <i class="far fa-heart"></i>
-                    </button>
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?w=400" alt="Tumbler">
-                    </div>
-                    <div class="product-info">
-                        <h3>Tumbler Stainless Custom</h3>
-                        <p class="product-desc">500ml dengan logo perusahaan</p>
-                        <div class="product-footer">
-                            <span class="price">Rp 75.000 <span class="old-price">Rp 95.000</span></span>
-                            <button class="add-to-cart">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                            <div class="product-footer">
+                                <span class="price">
+                                    Rp {{ number_format($product->price, 0, ',', '.') }}
 
-                <!-- Product 5 -->
-                <div class="product-card">
-                    <button class="wishlist-btn">
-                        <i class="far fa-heart"></i>
-                    </button>
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1588282322673-c31965a75c3e?w=400" alt="Booth">
-                    </div>
-                    <div class="product-info">
-                        <h3>Booth Promosi 3x3m</h3>
-                        <p class="product-desc">Tenda promosi dengan custom print</p>
-                        <div class="product-footer">
-                            <span class="price">Rp 2.500.000</span>
-                            <button class="add-to-cart">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
+                                    @if ($product->old_price)
+                                        <span class="old-price">Rp {{ number_format($product->old_price, 0, ',', '.') }}</span>
+                                    @endif
+                                </span>
+                                
+                                <form action="{{ route('cart.add') }}" method="POST" class="cart-form">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product->product_id }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    
+                                    <button type="button" 
+                                        class="add-to-cart" 
+                                        data-auth="{{ auth()->check() ? 'true' : 'false' }}">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                    </div>
+                   
                 </div>
+                @endforeach
 
-                <!-- Product 6 -->
-                <div class="product-card">
-                    <button class="wishlist-btn">
-                        <i class="far fa-heart"></i>
-                    </button>
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400" alt="Banner Roll Up">
-                    </div>
-                    <div class="product-info">
-                        <h3>Roll Up Banner</h3>
-                        <p class="product-desc">85x200cm, portable dan praktis</p>
-                        <div class="product-footer">
-                            <span class="price">Rp 225.000</span>
-                            <button class="add-to-cart">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
+
             
             <div class="text-center">
                 <a href="{{ route('produk') }}" class="btn-secondary">Lihat Semua Produk</a>

@@ -8,6 +8,35 @@ if (mobileMenuBtn) {
     });
 }
 
+// Add to Cart
+const addToCartBtns = document.querySelectorAll('.btn-add-cart');
+
+addToCartBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const isAuth = btn.getAttribute('data-auth') === "true";
+        const form = btn.closest('.cart-form');
+
+        if (!isAuth) {
+            showNotification('Anda belum login, mengalihkan ke halaman login...', 'error');
+
+            setTimeout(() => {
+                window.location.href = "/login";
+            }, 2000);
+
+        } else {
+            form.submit();
+
+            btn.style.transform = 'scale(0.9)';
+            setTimeout(() => { btn.style.transform = 'scale(1.1)'; }, 100);
+            setTimeout(() => { btn.style.transform = 'scale(1)'; }, 200);
+
+            showNotification('Produk berhasil ditambahkan ke keranjang!', 'success');
+        }
+    });
+});
+
 // Search Bar Toggle
 const searchToggle = document.querySelector('.search-toggle');
 const searchBarWrapper = document.getElementById('searchBarWrapper');
@@ -96,30 +125,6 @@ wishlistBtns.forEach(btn => {
             icon.classList.add('far');
             showNotification('Dihapus dari wishlist');
         }
-    });
-});
-
-// Add to Cart
-const addToCartBtns = document.querySelectorAll('.btn-add-cart');
-const cartBadge = document.querySelector('.cart-badge');
-let cartCount = parseInt(cartBadge.textContent) || 0;
-
-addToCartBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        cartCount++;
-        cartBadge.textContent = cartCount;
-        
-        // Visual feedback
-        btn.style.transform = 'scale(0.9)';
-        setTimeout(() => {
-            btn.style.transform = 'scale(1.1)';
-        }, 100);
-        setTimeout(() => {
-            btn.style.transform = 'scale(1)';
-        }, 200);
-        
-        showNotification('Produk ditambahkan ke keranjang!', 'success');
     });
 });
 
