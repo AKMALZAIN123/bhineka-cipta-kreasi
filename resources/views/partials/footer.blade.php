@@ -64,9 +64,12 @@
             <div class="footer-bottom">
                 <p>&copy; 2025 Bhineka Cipta Kreasi. All Rights Reserved.</p>
                 <div class="footer-links">
-                    <a href="#">Kebijakan Privasi</a>
-                    <a href="#">Syarat & Ketentuan</a>
-                    <a href="#">FAQ</a>
+                    <a href="{{ route('privasi') }}" class="{{ request()->routeIs('privasi') ? 'active' : '' }}">
+                    Kebijakan Privasi</a>
+                    <a href="{{ route('syarat') }}" class="{{ request()->routeIs('syarat') ? 'active' : '' }}">
+                    Syarat & Ketentuan</a>
+                    <a href="{{ route('faq') }}" class="{{ request()->routeIs('faq') ? 'active' : '' }}">
+                    FAQ</a>
                 </div>
             </div>
         </div>

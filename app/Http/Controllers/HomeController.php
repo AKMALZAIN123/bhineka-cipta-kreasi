@@ -48,6 +48,21 @@ class HomeController extends Controller
         return view('kontak');
     }
 
+    public function privasi()
+    {
+        return view('privasi');
+    }
+
+    public function syarat()
+    {
+        return view('syarat');
+    }
+
+    public function faq()
+    {
+        return view('faq');
+    }
+
     // Protected routes
     public function cart()
     {
