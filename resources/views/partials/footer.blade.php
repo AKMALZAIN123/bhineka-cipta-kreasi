@@ -4,8 +4,9 @@
             <div class="footer-grid">
                 <div class="footer-column">
                     <div class="footer-logo">
-                        <i class="fas fa-print"></i>
-                        <span>Bhineka Cipta Kreasi</span>
+                        <a href="{{ route('home') }}" class="logologo">
+                            <img src="{{ asset('images/logo_footer.png') }}" alt="Bhineka Cipta Kreasi Logo" class="logo-img">
+                        </a>
                     </div>
                     <p>Solusi terpercaya untuk semua kebutuhan percetakan dan periklanan Anda sejak 2010.</p>
                     <div class="social-links">

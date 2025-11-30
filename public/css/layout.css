@@ -21,10 +21,13 @@
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--primary-color);
+    text-decoration: none;
 }
 
-.logo i {
-    font-size: 1.8rem;
+.logo-img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
 }
 
 .nav-links {
@@ -211,17 +214,20 @@
     margin-bottom: 3rem;
 }
 
-.footer-logo {
+footer.logo {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     font-size: 1.5rem;
     font-weight: 700;
-    margin-bottom: 1rem;
+    color: var(--primary-color);
+    text-decoration: none;
 }
 
-.footer-logo i {
-    font-size: 1.8rem;
+footer.logo-img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
 }
 
 .footer-column p {

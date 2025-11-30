@@ -3,8 +3,9 @@
         <div class="container">
             <div class="nav-wrapper">
                 <div class="logo">
-                    <i class="fas fa-print"></i>
-                    <span>Bhineka Cipta Kreasi</span>
+                    <a href="{{ route('home') }}" class="logologo">
+                        <img src="{{ asset('images/logo_nav.png') }}" alt="Bhineka Cipta Kreasi Logo" class="logo-img">
+                    </a>
                 </div>
                 
                <div class="nav-links" id="navLinks">
