@@ -6,34 +6,6 @@ mobileMenuBtn.addEventListener('click', () => {
     navLinks.classList.toggle('active');
 });
 
-// Add to Cart
-const addToCartBtns = document.querySelectorAll('.add-to-cart');
-addToCartBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        const isAuth = btn.getAttribute('data-auth') === "true";
-        const form = btn.closest('.cart-form');
-
-        if (!isAuth) {
-            showNotification('Anda belum login, mengalihkan ke halaman login...', 'error');
-
-            setTimeout(() => {
-                window.location.href = "/login";
-            }, 2000);
-
-        } else {
-            form.submit();
-            
-            btn.style.transform = 'scale(0.9)';
-            setTimeout(() => { btn.style.transform = 'scale(1.1)'; }, 100);
-            setTimeout(() => { btn.style.transform = 'scale(1)'; }, 200);
-
-            showNotification('Produk berhasil ditambahkan ke keranjang!', 'success');
-        }
-    });
-});
-
 // Wishlist Toggle
 const wishlistBtns = document.querySelectorAll('.wishlist-btn');
 wishlistBtns.forEach(btn => {
@@ -51,13 +23,29 @@ wishlistBtns.forEach(btn => {
     });
 });
 
-// Newsletter Form
-const newsletterForm = document.querySelector('.newsletter-form');
-newsletterForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = newsletterForm.querySelector('input').value;
-    showNotification('Terima kasih! Email Anda telah terdaftar.', 'success');
-    newsletterForm.reset();
+// Add to Cart
+const addToCartBtns = document.querySelectorAll('.add-to-cart');
+const cartBadge = document.querySelector('.cart-badge');
+let cartCount = 0;
+
+addToCartBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        cartCount++;
+        cartBadge.textContent = cartCount;
+        
+        // Visual feedback
+        btn.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+            btn.style.transform = 'scale(1.1)';
+        }, 100);
+        setTimeout(() => {
+            btn.style.transform = 'scale(1)';
+        }, 200);
+        
+        // Show notification
+        showNotification('Produk berhasil ditambahkan ke keranjang!');
+    });
 });
 
 // Smooth Scroll
@@ -83,41 +71,52 @@ productCards.forEach(card => {
     });
 });
 
-// Collection Card Click
-const collectionCards = document.querySelectorAll('.collection-card');
-collectionCards.forEach(card => {
-    card.addEventListener('click', () => {
-        // Navigate to collection page
-        window.location.href = '/products';
+// Gallery Animation on Scroll
+const galleryItems = document.querySelectorAll('.gallery-item');
+
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '0';
+            entry.target.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                entry.target.style.transition = 'all 0.6s ease';
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }, 100);
+            
+            observer.unobserve(entry.target);
+        }
     });
+}, observerOptions);
+
+galleryItems.forEach(item => {
+    observer.observe(item);
 });
 
 // Notification Function
 function showNotification(message, type = 'info') {
+    // Remove existing notification
     const existingNotif = document.querySelector('.notification');
     if (existingNotif) {
         existingNotif.remove();
     }
     
+    // Create notification
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
-    
-    let icon = 'fa-info-circle';
-    let bgColor = '#2563eb';
-    
-    if (type === 'success') {
-        icon = 'fa-check-circle';
-        bgColor = '#10b981';
-    } else if (type === 'error') {
-        icon = 'fa-exclamation-circle';
-        bgColor = '#ef4444';
-    }
-    
     notification.innerHTML = `
-        <i class="fas ${icon}"></i>
+        <i class="fas fa-check-circle"></i>
         <span>${message}</span>
     `;
     
+    // Add styles
     notification.style.cssText = `
         position: fixed;
         top: 100px;
@@ -131,19 +130,11 @@ function showNotification(message, type = 'info') {
         gap: 1rem;
         z-index: 9999;
         animation: slideIn 0.3s ease-out;
-        border-left: 4px solid ${bgColor};
     `;
-    
-    const notifIcon = notification.querySelector('i');
-    notifIcon.style.color = bgColor;
-    notifIcon.style.fontSize = '1.5rem';
-    
-    const notifText = notification.querySelector('span');
-    notifText.style.color = '#1f2937';
-    notifText.style.fontWeight = '500';
     
     document.body.appendChild(notification);
     
+    // Auto remove after 3 seconds
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease-out';
         setTimeout(() => {
@@ -189,7 +180,7 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Scroll to top button (optional)
+// Scroll to top button
 window.addEventListener('scroll', () => {
     const scrollBtn = document.querySelector('.scroll-to-top');
     if (window.pageYOffset > 300) {
@@ -250,4 +241,7 @@ window.addEventListener('load', () => {
         document.body.style.transition = 'opacity 0.5s';
         document.body.style.opacity = '1';
     }, 100);
+    
+    // Log gallery items
+    console.log(`Gallery loaded with ${galleryItems.length} items`);
 });

@@ -384,10 +384,6 @@
                 <h2>Masih Punya Pertanyaan?</h2>
                 <p>Jangan ragu untuk menghubungi tim customer service kami. Kami siap membantu Anda!</p>
                 <div class="cta-buttons">
-                    <a href="kontak.html" class="btn-primary">
-                        <i class="fas fa-phone"></i>
-                        Hubungi Kami
-                    </a>
                     <a href="https://wa.me/6281234567890" target="_blank" class="btn-whatsapp">
                         <i class="fab fa-whatsapp"></i>
                         Chat WhatsApp

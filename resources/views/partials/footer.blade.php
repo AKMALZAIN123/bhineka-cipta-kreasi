@@ -8,34 +8,34 @@
                             <img src="{{ asset('images/logo_footer.png') }}" alt="Bhineka Cipta Kreasi Logo" class="logo-img">
                         </a>
                     </div>
-                    <p>Solusi terpercaya untuk semua kebutuhan percetakan dan periklanan Anda sejak 2010.</p>
+                    <p>Solusi terpercaya untuk semua kebutuhan percetakan dan periklanan Anda sejak 20+ tahun.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
                 
                 <div class="footer-column">
-                    <h4>Kategori</h4>
+                    <h4>Produk Kami</h4>
                     <ul>
-                        <li><a href="#">Banner & Spanduk</a></li>
-                        <li><a href="#">Kartu Undangan</a></li>
-                        <li><a href="#">Merchandise</a></li>
-                        <li><a href="#">Alat Event</a></li>
-                        <li><a href="#">Media Digital</a></li>
+                        <li><a href="{{ route('home') }}#categories">Banner & Spanduk</a></li>
+                        <li><a href="{{ route('home') }}#categories">Kartu Undangan</a></li>
+                        <li><a href="{{ route('home') }}#categories">Lanyard & ID Card</a></li>
+                        <li><a href="{{ route('produk') }}">Lihat Semua Produk</a></li>
+                        <li><a href="{{ route('home') }}#gallery">Galeri Hasil Karya</a></li>
                     </ul>
                 </div>
-                
+
                 <div class="footer-column">
-                    <h4>Layanan Kami</h4>
+                    <h4>Informasi</h4>
                     <ul>
-                        <li><a href="#">Desain Grafis</a></li>
-                        <li><a href="#">Cetak Digital</a></li>
-                        <li><a href="#">Cetak Offset</a></li>
-                        <li><a href="#">Custom Order</a></li>
-                        <li><a href="#">Konsultasi</a></li>
+                        <li><a href="{{ route('tentang') }}">Tentang Kami</a></li>
+                        <li><a href="{{ route('home') }}#cara-pesan">Cara Pemesanan</a></li>
+                        <li><a href="{{ route('syarat') }}">Syarat & Ketentuan</a></li>
+                        <li><a href="{{ route('privasi') }}">Kebijakan Privasi</a></li>
+                        <li><a href="{{ route('faq') }}">FAQ</a></li>
                     </ul>
                 </div>
                 
@@ -44,15 +44,15 @@
                     <ul class="contact-info">
                         <li>
                             <i class="fas fa-phone"></i>
-                            <span>+62 812-3456-7890</span>
+                            <span>(0281) 6572506</span>
                         </li>
                         <li>
                             <i class="fas fa-envelope"></i>
-                            <span>info@bhinekaciptakreasi.com</span>
+                            <span>purwokerto@karyasatria.com</span>
                         </li>
                         <li>
                             <i class="fas fa-map-marker-alt"></i>
-                            <span>Jl. Contoh No. 123, Jakarta</span>
+                            <span>Jl. Raya Prompong RT 04/04, Baturaden</span>
                         </li>
                         <li>
                             <i class="fas fa-clock"></i>
@@ -64,14 +64,6 @@
             
             <div class="footer-bottom">
                 <p>&copy; 2025 Bhineka Cipta Kreasi. All Rights Reserved.</p>
-                <div class="footer-links">
-                    <a href="{{ route('privasi') }}" class="{{ request()->routeIs('privasi') ? 'active' : '' }}">
-                    Kebijakan Privasi</a>
-                    <a href="{{ route('syarat') }}" class="{{ request()->routeIs('syarat') ? 'active' : '' }}">
-                    Syarat & Ketentuan</a>
-                    <a href="{{ route('faq') }}" class="{{ request()->routeIs('faq') ? 'active' : '' }}">
-                    FAQ</a>
-                </div>
             </div>
         </div>
     </footer>

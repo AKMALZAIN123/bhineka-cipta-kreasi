@@ -23,7 +23,7 @@
     </section>
 
     <!-- Featured Categories -->
-    <section class="categories">
+    <section class="categories" id="categories">
         <div class="container">
             <div class="section-header">
                 <h2>Layanan Kami</h2>
@@ -165,57 +165,151 @@
         </div>
     </section>
 
-    <!-- Featured Collections -->
-    <section class="collections" id="collections">
+    <!-- How to Order Section -->
+    <section class="how-to-order" id="cara-pesan">
         <div class="container">
             <div class="section-header">
-                <h2>Koleksi Unggulan</h2>
-                <p>Jelajahi kategori produk pilihan untuk kebutuhan promosi dan event Anda</p>
+                <h2>Cara Pemesanan</h2>
+                <p>Proses pemesanan mudah dan cepat, dari konsultasi hingga produk sampai ke tangan Anda</p>
             </div>
             
-            <div class="collection-grid">
-                <div class="collection-card large">
-                    <img src="https://images.unsplash.com/photo-1596079890744-c1a0462d0975?w=600" alt="Percetakan">
-                    <div class="collection-overlay">
-                        <h3>Percetakan</h3>
-                        <p>Banner, Spanduk, Brosur & Lebih</p>
-                        <button class="btn-outline">Jelajahi</button>
+            <div class="order-steps">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Pilih Produk</h3>
+                    <p>Pilih produk dari katalog atau sampaikan kebutuhan khusus Anda</p>
+                </div>
+                
+                <div class="step-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">
+                        <i class="fas fa-ruler-combined"></i>
+                    </div>
+                    <h3>Masukkan Desain & Pilih Ukuran</h3>
+                    <p>Upload desain Anda dan pilih ukuran yang sesuai kebutuhan</p>
+                </div>
+                
+                <div class="step-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <h3>Konfirmasi & Bayar</h3>
+                    <p>Setujui pesanan dan lakukan pembayaran dengan mudah</p>
+                </div>
+                
+                <div class="step-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-icon">
+                        <i class="fas fa-print"></i>
+                    </div>
+                    <h3>Produksi</h3>
+                    <p>Produk diproduksi dengan kualitas terbaik dan cepat</p>
+                </div>
+                
+                <div class="step-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">5</div>
+                    <div class="step-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <h3>Pengiriman</h3>
+                    <p>Produk dikirim atau ambil langsung di tempat kami</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Portfolio -->
+    <section class="gallery" id="gallery">
+        <div class="container">
+            <div class="section-header">
+                <h2>Galeri Hasil Karya</h2>
+                <p>Lihat portofolio hasil cetakan berkualitas yang telah kami kerjakan</p>
+            </div>
+            
+            <div class="gallery-grid">
+                <!-- Banner & Spanduk 1 -->
+                <div class="gallery-item">
+                    <div class="gallery-image">
+                        <img src="https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?w=800" alt="Banner Event">
+                    </div>
+                    <div class="gallery-caption">
+                        <h4>Banner Event Festival</h4>
+                        <p>Banner outdoor 3x2 meter</p>
                     </div>
                 </div>
                 
-                <div class="collection-card">
-                    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400" alt="Event">
-                    <div class="collection-overlay">
-                        <h3>Alat Event</h3>
-                        <p>Booth, Tenda & Backdrop</p>
-                        <button class="btn-outline">Jelajahi</button>
+                <!-- Banner & Spanduk 2 -->
+                <div class="gallery-item">
+                    <div class="gallery-image">
+                        <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800" alt="Spanduk Promosi">
+                    </div>
+                    <div class="gallery-caption">
+                        <h4>Spanduk Grand Opening</h4>
+                        <p>Spanduk flexi 5x1 meter</p>
                     </div>
                 </div>
                 
-                <div class="collection-card">
-                    <img src="https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400" alt="Merchandise">
-                    <div class="collection-overlay">
-                        <h3>Merchandise</h3>
-                        <p>Custom Branding Products</p>
-                        <button class="btn-outline">Jelajahi</button>
+                <!-- Kartu Undangan 1 -->
+                <div class="gallery-item">
+                    <div class="gallery-image">
+                        <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800" alt="Kartu Undangan Wedding">
+                    </div>
+                    <div class="gallery-caption">
+                        <h4>Undangan Pernikahan</h4>
+                        <p>Hardcover dengan emboss gold</p>
                     </div>
                 </div>
                 
-                <div class="collection-card">
-                    <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400" alt="Digital">
-                    <div class="collection-overlay">
-                        <h3>Media Digital</h3>
-                        <p>Videotron & Baliho</p>
-                        <button class="btn-outline">Jelajahi</button>
+                <!-- Kartu Undangan 2 -->
+                <div class="gallery-item">
+                    <div class="gallery-image">
+                        <img src="https://images.unsplash.com/photo-1530435460869-d13625c69bbf?w=800" alt="Kartu Undangan Premium">
+                    </div>
+                    <div class="gallery-caption">
+                        <h4>Undangan Custom Premium</h4>
+                        <p>Art carton dengan foil printing</p>
                     </div>
                 </div>
                 
-                <div class="collection-card large">
-                    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600" alt="Corporate">
-                    <div class="collection-overlay">
-                        <h3>Corporate</h3>
-                        <p>Solusi Lengkap untuk Bisnis</p>
-                        <button class="btn-outline">Jelajahi</button>
+                <!-- Lanyard & ID Card 1 -->
+                <div class="gallery-item">
+                    <div class="gallery-image">
+                        <img src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=800" alt="Lanyard Custom">
+                    </div>
+                    <div class="gallery-caption">
+                        <h4>Lanyard Corporate</h4>
+                        <p>Print sublim dengan logo perusahaan</p>
+                    </div>
+                </div>
+                
+                <!-- Lanyard & ID Card 2 -->
+                <div class="gallery-item">
+                    <div class="gallery-image">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800" alt="ID Card">
+                    </div>
+                    <div class="gallery-caption">
+                        <h4>ID Card Event</h4>
+                        <p>PVC card dengan print full color</p>
                     </div>
                 </div>
             </div>

@@ -255,9 +255,9 @@
                     layanan terbaik dan solusi advertising yang tepat bagi bisnis Anda.
                 </p>
                 <div class="cta-buttons">
-                    <a href="#contact" class="btn-primary">
-                        <i class="fas fa-phone"></i>
-                        Hubungi Kami
+                    <a href="https://wa.me/6281234567890" target="_blank" class="btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i>
+                        Chat WhatsApp
                     </a>
                     <a href="{{ route('produk') }}" class="btn-secondary">
                         <i class="fas fa-shopping-bag"></i>
