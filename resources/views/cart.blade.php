@@ -76,7 +76,7 @@
                         Lanjutkan ke Pembayaran
                     </button>
 
-                    <a href="products.html" class="btn-continue">
+                    <a href="{{ route('home') }}" class="btn-continue">
                         <i class="fas fa-arrow-left"></i>
                         Lanjut Belanja
                     </a>
