@@ -1,6 +1,350 @@
 // Get cart data from localStorage
 let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-let savedAddress = JSON.parse(localStorage.getItem('savedAddress')) || null;
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadCartSummary();
+    initializeFormHandlers();
+    updateCartBadge();
+});
+
+// Load cart summary
+function loadCartSummary() {
+    const summaryProducts = document.getElementById('summaryProducts');
+    const itemCount = document.getElementById('itemCount');
+    const subtotalEl = document.getElementById('subtotal');
+    const shippingEl = document.getElementById('shipping');
+    const totalPriceEl = document.getElementById('totalPrice');
+    
+    if (cartItems.length === 0) {
+        summaryProducts.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: var(--text-light);">
+                <i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                <p>Keranjang kosong</p>
+                <a href="/produk" style="color: var(--primary-color); text-decoration: none;">
+                    Belanja Sekarang
+                </a>
+            </div>
+        `;
+        return;
+    }
+    
+    // Render products
+    summaryProducts.innerHTML = cartItems.map(item => `
+        <div class="summary-product">
+            <div class="product-thumb">
+                <img src="${item.image}" alt="${item.name}">
+            </div>
+            <div class="product-details">
+                <h4>${item.name}</h4>
+                <p>Jumlah: ${item.quantity}</p>
+                <span class="product-price">${formatPrice(item.price * item.quantity)}</span>
+            </div>
+        </div>
+    `).join('');
+    
+    // Calculate totals
+    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const shipping = 10000;
+    const total = subtotal + shipping;
+    
+    // Update UI
+    itemCount.textContent = `(${cartItems.length} produk)`;
+    subtotalEl.textContent = formatPrice(subtotal);
+    shippingEl.textContent = formatPrice(shipping);
+    totalPriceEl.textContent = formatPrice(total);
+}
+
+// Initialize form handlers
+function initializeFormHandlers() {
+    // Submit buttons
+    document.getElementById('btnSubmit').addEventListener('click', handleCheckout);
+    document.getElementById('btnSubmitMobile').addEventListener('click', handleCheckout);
+}
+
+// Handle checkout - Kirim ke Backend Laravel
+function handleCheckout(e) {
+    e.preventDefault();
+    
+    // Validate cart
+    if (cartItems.length === 0) {
+        showNotification('Keranjang Anda kosong!', 'error');
+        return;
+    }
+    
+    // Get form data
+    const formData = {
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        address: document.getElementById('address').value.trim(),
+        district: document.getElementById('district').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        province: document.getElementById('province').value.trim(),
+        postalCode: document.getElementById('postalCode').value.trim(),
+        notes: document.getElementById('notes').value.trim(),
+        paymentMethod: document.querySelector('input[name="payment"]:checked').value,
+        orderNotes: document.getElementById('orderNotes').value.trim(),
+        agreeTerms: document.getElementById('agreeTerms').checked,
+        items: cartItems
+    };
+    
+    // Validate required fields
+    if (!formData.name || !formData.phone || !formData.email || 
+        !formData.address || !formData.district || !formData.city || 
+        !formData.province || !formData.postalCode) {
+        showNotification('Mohon lengkapi semua field yang wajib diisi!', 'error');
+        return;
+    }
+    
+    // Validate email
+    if (!isValidEmail(formData.email)) {
+        showNotification('Format email tidak valid!', 'error');
+        return;
+    }
+    
+    // Validate phone
+    if (!isValidPhone(formData.phone)) {
+        showNotification('Format nomor telepon tidak valid!', 'error');
+        return;
+    }
+    
+    // Validate terms
+    if (!formData.agreeTerms) {
+        showNotification('Anda harus menyetujui Syarat & Ketentuan!', 'error');
+        return;
+    }
+    
+    // Show loading
+    showLoading();
+    
+    // Kirim ke Backend Laravel
+    fetch(checkoutUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        
+        if (data.success && data.snap_token) {
+            // Trigger Midtrans Snap Popup
+            snap.pay(data.snap_token, {
+                onSuccess: function(result) {
+                    // Pembayaran berhasil
+                    localStorage.removeItem('cart'); // Clear cart
+                    window.location.href = successUrl + '?order=' + result.order_id;
+                },
+                onPending: function(result) {
+                    // Pembayaran pending
+                    localStorage.removeItem('cart');
+                    window.location.href = pendingUrl + '?order=' + result.order_id;
+                },
+                onError: function(result) {
+                    // Pembayaran gagal
+                    showErrorModal('Pembayaran gagal! Silakan coba lagi.');
+                },
+                onClose: function() {
+                    // User tutup popup
+                    showNotification('Anda menutup halaman pembayaran', 'warning');
+                }
+            });
+        } else {
+            showNotification(data.message || 'Terjadi kesalahan!', 'error');
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        console.error('Error:', error);
+        showNotification('Terjadi kesalahan saat memproses pesanan!', 'error');
+    });
+}
+
+// Show error modal
+function showErrorModal(message) {
+    const modal = document.getElementById('errorModal');
+    const messageEl = document.getElementById('errorMessage');
+    
+    if (modal && messageEl) {
+        messageEl.textContent = message;
+        modal.style.display = 'flex';
+    } else {
+        showNotification(message, 'error');
+    }
+}
+
+// Validation functions
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function isValidPhone(phone) {
+    return /^[0-9]{10,13}$/.test(phone.replace(/[\s-]/g, ''));
+}
+
+// Format price
+function formatPrice(price) {
+    return 'Rp ' + price.toLocaleString('id-ID');
+}
+
+// Update cart badge
+function updateCartBadge() {
+    const cartBadge = document.querySelector('.cart-badge');
+    if (cartBadge) {
+        cartBadge.textContent = cartItems.length;
+    }
+}
+
+// Show notification
+function showNotification(message, type = 'info') {
+    const existingNotif = document.querySelector('.notification');
+    if (existingNotif) {
+        existingNotif.remove();
+    }
+    
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    
+    let icon = 'fa-info-circle';
+    let bgColor = '#3b82f6';
+    
+    if (type === 'success') {
+        icon = 'fa-check-circle';
+        bgColor = '#10b981';
+    } else if (type === 'error') {
+        icon = 'fa-exclamation-circle';
+        bgColor = '#ef4444';
+    } else if (type === 'warning') {
+        icon = 'fa-exclamation-triangle';
+        bgColor = '#f59e0b';
+    }
+    
+    notification.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span>${message}</span>
+    `;
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        z-index: 9999;
+        animation: slideIn 0.3s ease-out;
+        border-left: 4px solid ${bgColor};
+    `;
+    
+    const iconElement = notification.querySelector('i');
+    iconElement.style.color = bgColor;
+    iconElement.style.fontSize = '1.5rem';
+    
+    const textElement = notification.querySelector('span');
+    textElement.style.color = '#1f2937';
+    textElement.style.fontWeight = '500';
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
+
+// Show loading
+function showLoading() {
+    const loading = document.createElement('div');
+    loading.className = 'loading-overlay';
+    loading.innerHTML = `
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Memproses pesanan Anda...</p>
+        </div>
+    `;
+    
+    loading.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+    `;
+    
+    const spinner = loading.querySelector('.loading-spinner');
+    spinner.style.cssText = `
+        text-align: center;
+        color: white;
+    `;
+    
+    document.body.appendChild(loading);
+}
+
+// Hide loading
+function hideLoading() {
+    const loading = document.querySelector('.loading-overlay');
+    if (loading) {
+        loading.remove();
+    }
+}
+
+// Add animation styles
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .spinner {
+        border: 4px solid rgba(255,255,255,0.3);
+        border-top: 4px solid white;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+`;
+document.head.appendChild(style);
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
