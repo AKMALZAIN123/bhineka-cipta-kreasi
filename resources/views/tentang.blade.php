@@ -78,7 +78,7 @@
         <div class="container">
             <div class="story-grid">
                 <div class="story-image">
-                    <img src="https://images.unsplash.com/photo-1542744094-3a31f272c490?w=600" alt="Company">
+                    <img src="{{ asset('images/cerita-kami1.png') }}" alt="Company">
                 </div>
                 <div class="story-content">
                     <h2>Cerita Kami</h2>
@@ -113,7 +113,7 @@
             </div>
             <div class="team-content">
                 <div class="team-image">
-                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600" alt="Team">
+                    <img src="{{ asset('images/tim-kami.png') }}" alt="Team">
                 </div>
                 <div class="team-text">
                     <p>

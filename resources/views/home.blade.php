@@ -250,10 +250,10 @@
                 <!-- Banner & Spanduk 1 -->
                 <div class="gallery-item">
                     <div class="gallery-image">
-                        <img src="https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?w=800" alt="Banner Event">
+                        <img src="{{ asset('images/banner.png') }}" alt="Banner Event">
                     </div>
                     <div class="gallery-caption">
-                        <h4>Banner Event Festival</h4>
+                        <h4>Banner Event Outdoor</h4>
                         <p>Banner outdoor 3x2 meter</p>
                     </div>
                 </div>
@@ -261,7 +261,7 @@
                 <!-- Banner & Spanduk 2 -->
                 <div class="gallery-item">
                     <div class="gallery-image">
-                        <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800" alt="Spanduk Promosi">
+                        <img src="{{ asset('images/grandopening.jpeg') }}" alt="Spanduk Promosi">
                     </div>
                     <div class="gallery-caption">
                         <h4>Spanduk Grand Opening</h4>
@@ -272,10 +272,10 @@
                 <!-- Kartu Undangan 1 -->
                 <div class="gallery-item">
                     <div class="gallery-image">
-                        <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800" alt="Kartu Undangan Wedding">
+                        <img src="{{ asset('images/wedding.jpeg') }}" alt="Kartu Undangan Wedding">
                     </div>
                     <div class="gallery-caption">
-                        <h4>Undangan Pernikahan</h4>
+                        <h4>Undangan Pernikahan Hardcover</h4>
                         <p>Hardcover dengan emboss gold</p>
                     </div>
                 </div>
@@ -283,10 +283,10 @@
                 <!-- Kartu Undangan 2 -->
                 <div class="gallery-item">
                     <div class="gallery-image">
-                        <img src="https://images.unsplash.com/photo-1530435460869-d13625c69bbf?w=800" alt="Kartu Undangan Premium">
+                        <img src="{{ asset('images/card-custom.jpeg') }}" alt="Kartu Undangan Premium">
                     </div>
                     <div class="gallery-caption">
-                        <h4>Undangan Custom Premium</h4>
+                        <h4>Undangan Custom</h4>
                         <p>Art carton dengan foil printing</p>
                     </div>
                 </div>
@@ -294,10 +294,10 @@
                 <!-- Lanyard & ID Card 1 -->
                 <div class="gallery-item">
                     <div class="gallery-image">
-                        <img src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=800" alt="Lanyard Custom">
+                        <img src="{{ asset('images/lanyard.jpeg') }}" alt="Lanyard Custom">
                     </div>
                     <div class="gallery-caption">
-                        <h4>Lanyard Corporate</h4>
+                        <h4>Lanyard Custom</h4>
                         <p>Print sublim dengan logo perusahaan</p>
                     </div>
                 </div>
@@ -305,7 +305,7 @@
                 <!-- Lanyard & ID Card 2 -->
                 <div class="gallery-item">
                     <div class="gallery-image">
-                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800" alt="ID Card">
+                        <img src="{{ asset('images/idcard.jpeg') }}" alt="ID Card">
                     </div>
                     <div class="gallery-caption">
                         <h4>ID Card Event</h4>

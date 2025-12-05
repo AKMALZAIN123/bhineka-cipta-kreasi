@@ -139,8 +139,7 @@ body {
 /* Hero Section */
 .hero {
     height: 600px;
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(30, 64, 175, 0.9)),
-                url('https://images.unsplash.com/photo-1542744094-3a31f272c490?w=1200') center/cover;
+    background: url('../images/hero-section.png') center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -635,7 +634,7 @@ section {
     font-size: 1.15rem;
     color: var(--text-dark);
     margin-bottom: 0.4rem;
-    font-weight: 600;
+    font-weight: bold;
 }
 
 .gallery-caption p {

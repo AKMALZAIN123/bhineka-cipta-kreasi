@@ -1,8 +1,7 @@
 /* Hero Section */
 .about-hero {
     height: 400px;
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(30, 64, 175, 0.9)),
-                url('https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1200') center/cover;
+    background: url('../images/about-me.png') center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -179,6 +178,7 @@
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    aspect-ratio: 16/9;
 }
 
 .team-image img {
