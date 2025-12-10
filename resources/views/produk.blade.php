@@ -111,7 +111,7 @@
                                     <input type="hidden" name="product_id" value="{{ $product->product_id }}">
                                     <input type="hidden" name="quantity" value="1">
                                     
-                                    <button type="button" 
+                                    <button type="submit" 
                                         class="btn-add-cart" 
                                         data-auth="{{ auth()->check() ? 'true' : 'false' }}">
                                         <i class="fas fa-shopping-cart"></i>

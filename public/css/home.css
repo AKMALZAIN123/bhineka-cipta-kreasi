@@ -285,6 +285,12 @@ section {
     line-height: 1.6;
 }
 
+.product-card-link {
+    text-decoration: none;    
+    color: inherit;            
+    display: block;           
+}
+
 /* Products */
 .product-grid {
     display: grid;
