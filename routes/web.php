@@ -19,7 +19,7 @@ Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
 Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout');
 Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
 Route::get('/history', [HomeController::class, 'history'])->name('history');
-Route::get('/detail.history', [HomeController::class, 'detail.history'])->name('detail history');
+Route::get('/detail-history', [HomeController::class, 'detail-history'])->name('detail history');
 
 // Authentication pages (Blade) - untuk guest
 Route::middleware('guest')->group(function () {
