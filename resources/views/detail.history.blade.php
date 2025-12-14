@@ -10,7 +10,7 @@
     <main class="main-content">
         <div class="container">
             <!-- Back Button -->
-            <a href="{{ route('detail.history') }}" class="back-link">
+            <a href="{{ route('history') }}" class="back-link">
                 <i class="fas fa-arrow-left"></i>
                 Kembali ke Riwayat Pesanan
             </a>

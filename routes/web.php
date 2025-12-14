@@ -16,6 +16,10 @@ Route::get('/detail', [HomeController::class, 'detail'])->name('detail');
 Route::get('/privasi', [HomeController::class, 'privasi'])->name('privasi');
 Route::get('/syarat', [HomeController::class, 'syarat'])->name('syarat');
 Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
+Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout');
+Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
+Route::get('/history', [HomeController::class, 'history'])->name('history');
+Route::get('/detail.history', [HomeController::class, 'detail.history'])->name('detail history');
 
 // Authentication pages (Blade) - untuk guest
 Route::middleware('guest')->group(function () {
