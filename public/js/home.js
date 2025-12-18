@@ -23,28 +23,29 @@ wishlistBtns.forEach(btn => {
     });
 });
 
-// Add to Cart
+// Add to Cart logic
 const addToCartBtns = document.querySelectorAll('.add-to-cart');
 const cartBadge = document.querySelector('.cart-badge');
-let cartCount = 0;
 
 addToCartBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        cartCount++;
-        cartBadge.textContent = cartCount;
-        
-        // Visual feedback
+    btn.addEventListener('click', function(e) {
+        const isAuth = btn.getAttribute('data-auth') === "true";
+        const form = btn.closest('.cart-form');
+
+        if (!isAuth) {
+            e.preventDefault();
+            showNotification('Anda belum login, mengalihkan ke halaman login...', 'error');
+            setTimeout(() => { window.location.href = "/login"; }, 2000);
+            return;
+        }
+        // Tidak perlu submit form via JS jika type submit, biarkan native
+        // Tapi boleh visual feedback
         btn.style.transform = 'scale(0.9)';
-        setTimeout(() => {
-            btn.style.transform = 'scale(1.1)';
-        }, 100);
-        setTimeout(() => {
-            btn.style.transform = 'scale(1)';
-        }, 200);
-        
-        // Show notification
+        setTimeout(() => { btn.style.transform = 'scale(1.1)'; }, 100);
+        setTimeout(() => { btn.style.transform = 'scale(1)'; }, 200);
         showNotification('Produk berhasil ditambahkan ke keranjang!');
+        // Badge update bisa dipindahkan ke response sukses backend  
+        // Cart badge di navbar sebaiknya diupdate dengan ajax dari backend, bukan increment manual
     });
 });
 

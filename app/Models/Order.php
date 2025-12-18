@@ -16,6 +16,15 @@ class Order extends Model
         'order_date',
         'total_amount',
         'status',
+        'nama_lengkap',
+        'nomor_telepon',
+        'email',
+        'alamat_lengkap',
+        'kecamatan',
+        'kabupaten_kota',
+        'provinsi',
+        'kode_pos',
+        'catatan_pengiriman',
     ];
 
     protected $casts = [

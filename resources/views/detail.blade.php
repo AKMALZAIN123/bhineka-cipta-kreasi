@@ -97,7 +97,7 @@
                     <p>{{ $product->description }}</p>
                 </div>
 
-                <!-- Quantity -->
+                <!-- Quantity - di luar form, terintegrasi via attribute 'form' -->
                 <div class="variant-group">
                     <label class="variant-label">
                         <i class="fas fa-boxes"></i>
@@ -105,7 +105,14 @@
                     </label>
                     <div class="quantity-selector">
                         <button class="qty-btn" id="qtyMinus"><i class="fas fa-minus"></i></button>
-                        <input type="number" class="qty-input" id="qtyInput" value="1" min="1" max="100">
+                        <input type="number"
+                            class="qty-input"
+                            id="qtyInput"
+                            name="quantity"
+                            value="1"
+                            min="1"
+                            max="{{ $product->stock ?? 100 }}"
+                            form="cartForm">
                         <button class="qty-btn" id="qtyPlus"><i class="fas fa-plus"></i></button>
                         <span class="stock-info">Stok: <strong>{{ $product->stock ?? 0 }}</strong></span>
                     </div>
@@ -113,17 +120,21 @@
 
                 <!-- Action Buttons -->
                 <div class="product-actions">
-                     <form action="{{ route('cart.add') }}" method="POST" class="cart-form">
-                         @csrf
-                         <input type="hidden" name="product_id" value="{{ $product->product_id }}">
-                        <button class="btn-add-cart" id="btnAddCart" data-auth="{{ auth()->check() ? 'true' : 'false' }}">
-                        <i class="fas fa-shopping-cart"></i>
-                        Tambah ke Keranjang
-                    </button>
-                     </form>
+                    <form action="{{ route('cart.add') }}"
+                        method="POST"
+                        class="cart-form"
+                        id="cartForm"> <!-- beri ID agar attribute form di atas bisa referensi ke sini -->
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $product->product_id }}">
+                        <button type="submit"
+                                class="btn-add-cart"
+                                id="btnAddCart"
+                                data-auth="{{ auth()->check() ? 'true' : 'false' }}">
+                            <i class="fas fa-shopping-cart"></i> Tambah ke Keranjang
+                        </button>
+                    </form>
                     <button class="btn-buy-now" id="btnBuyNow">
-                        <i class="fas fa-bolt"></i>
-                        Beli Sekarang
+                        <i class="fas fa-bolt"></i> Beli Sekarang
                     </button>
                 </div>
 

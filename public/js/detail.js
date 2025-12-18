@@ -347,64 +347,31 @@ function formatPrice(price) {
     }).format(price);
 }
 
-// Quantity Selector
+// Qty logic
 const qtyInput = document.getElementById('qtyInput');
 const qtyMinus = document.getElementById('qtyMinus');
 const qtyPlus = document.getElementById('qtyPlus');
 
-qtyMinus.addEventListener('click', () => {
+qtyMinus.addEventListener('click', (e) => {
+    e.preventDefault();
     let value = parseInt(qtyInput.value);
-    if (value > 1) {
-        qtyInput.value = value - 1;
-        updatePrice();
-    }
+    if (value > 1) qtyInput.value = value - 1;
 });
-
-qtyPlus.addEventListener('click', () => {
+qtyPlus.addEventListener('click', (e) => {
+    e.preventDefault();
     let value = parseInt(qtyInput.value);
-    const max = parseInt(qtyInput.max);
-    if (value < max) {
-        qtyInput.value = value + 1;
-        updatePrice();
-    }
+    if (value < parseInt(qtyInput.max)) qtyInput.value = value + 1;
 });
-
-qtyInput.addEventListener('change', () => {
-    let value = parseInt(qtyInput.value);
-    const min = parseInt(qtyInput.min);
-    const max = parseInt(qtyInput.max);
-    
-    if (value < min) qtyInput.value = min;
-    if (value > max) qtyInput.value = max;
-    
-    updatePrice();
-});
-
-// Add to Cart
+// Event submit pada FORM
+const cartForm = document.querySelector('.cart-form');
 const btnAddCart = document.getElementById('btnAddCart');
-
-btnAddCart.addEventListener('click', () => {
-    const quantity = parseInt(qtyInput.value);
-
-    const isAuth = btnAddCart.getAttribute('data-auth') === "true";
-    const form = btnAddCart.closest('.cart-form');
-
-    if (!isAuth) {
+cartForm.addEventListener('submit', function(e) {
+    if (btnAddCart.getAttribute('data-auth') !== "true") {
+        e.preventDefault();
         showNotification('Anda belum login, mengalihkan ke halaman login...', 'error');
         setTimeout(() => window.location.href = "/login", 2000);
-        return;
+        return false;
     }
-
-    // Submit backend cart form
-    form.submit();
-
-    // Visual Only (UI Feedback)
-    btnAddCart.innerHTML = `<i class="fas fa-check"></i> Ditambahkan!`;
-    setTimeout(() => {
-        btnAddCart.innerHTML = `<i class="fas fa-shopping-cart"></i> Tambah ke Keranjang`;
-    }, 1800);
-
-    showNotification(`${quantity} produk ditambahkan ke keranjang!`, 'success');
 });
 
 

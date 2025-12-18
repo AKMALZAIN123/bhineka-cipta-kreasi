@@ -5,8 +5,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\CartController;
 use App\Http\Controllers\API\OrderController;
+use App\Http\Controllers\PaymentController;
 
 require __DIR__.'/auth.php';
+
+// Payment callback (public - for Midtrans webhook)
+Route::post('/payment/notification', [PaymentController::class, 'handleNotification'])->name('payment.notification');
 
 // Product routes (public)
 Route::prefix('products')->group(function () {
