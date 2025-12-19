@@ -72,7 +72,7 @@
                     @if($product->badge)
                         <div class="product-badge">{{ $product->badge }}</div>
                     @endif
-
+    
                     <button class="wishlist-btn">
                         <i class="far fa-heart"></i>
                     </button>
