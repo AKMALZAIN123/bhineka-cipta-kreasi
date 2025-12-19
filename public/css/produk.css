@@ -282,6 +282,12 @@
     padding: 1.5rem;
 }
 
+.product-card-link {
+    text-decoration: none;     
+    color: inherit;            
+    display: block;            
+}
+
 .product-category {
     font-size: 0.85rem;
     color: var(--primary-color);

@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->string('alamat')->after('order_date');
-            $table->string('no_telp')->after('alamat');
+        Schema::table('payments', function (Blueprint $table) {
+            $table->string('snap_token')->nullable()->after('method');
         });
     }
 
@@ -22,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn(['alamat', 'no_telp']);
+        Schema::table('payments', function (Blueprint $table) {
+            $table->dropColumn(['snap_token']);
         });
     }
 };

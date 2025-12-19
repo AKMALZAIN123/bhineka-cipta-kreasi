@@ -68,6 +68,7 @@
             
             <div class="product-grid">
                 @foreach ($products as $product)
+<<<<<<< HEAD
                 <div class="product-card">
                     @if($product->badge)
                         <div class="product-badge">{{ $product->badge }}</div>
@@ -106,12 +107,42 @@
                                         <i class="fas fa-shopping-cart"></i>
                                     </button>
                                 </form>
+=======
+                    <a href="{{ route('produk.detail', $product->product_id) }}" class="product-card-link">
+                        <div class="product-card">
+                            @if($product->badge)
+                                <div class="product-badge">{{ $product->badge }}</div>
+                            @endif
+                            <button class="wishlist-btn">
+                                <i class="far fa-heart"></i>
+                            </button>
+                            <div class="product-image">
+                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
+                            </div>
+                            <div class="product-info">
+                                <h3>{{ $product->name }}</h3>
+                                <p class="product-desc">{{ $product->description }}</p>
+                                <div class="product-footer">
+                                    <span class="price">
+                                        Rp {{ number_format($product->price, 0, ',', '.') }}
+                                        @if ($product->old_price)
+                                            <span class="old-price">Rp {{ number_format($product->old_price, 0, ',', '.') }}</span>
+                                        @endif
+                                    </span>
+                                    <form action="{{ route('cart.add') }}" method="POST" class="cart-form" onClick="event.stopPropagation();">
+                                        @csrf
+                                        <input type="hidden" name="product_id" value="{{ $product->product_id }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="add-to-cart" data-auth="{{ auth()->check() ? 'true' : 'false' }}">
+                                            <i class="fas fa-shopping-cart"></i>
+                                        </button>
+                                    </form>
+                                </div>
+>>>>>>> d3c860f317827aa15c217290a289660d70dd0819
                             </div>
                         </div>
-                   
-                </div>
+                    </a>
                 @endforeach
-
             </div>
 
             

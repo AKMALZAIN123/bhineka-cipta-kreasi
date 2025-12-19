@@ -5,6 +5,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CartWebController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 
 // Public pages
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -41,11 +43,24 @@ Route::middleware('auth')->group(function () {
     Route::get('/cart', [HomeController::class, 'cart'])->name('cart');
     Route::post('/cart/add', [CartWebController::class, 'add'])->name('cart.add');
     Route::post('/cart/update/{id}', [CartWebController::class, 'update'])->name('cart.update');
-    Route::post('/cart/delete/{id}', [CartWebController::class, 'delete'])->name('cart.delete');
+    Route::delete('/cart/delete/{id}', [CartWebController::class, 'delete'])->name('cart.delete');
     
+    // Checkout & Order routes
+    Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+    Route::post('/checkout/process', [OrderController::class, 'processCheckout'])->name('checkout.process');
+    Route::get('/order/success', [OrderController::class, 'orderSuccess'])->name('order.success');
+    Route::get('/order/pending', [OrderController::class, 'orderPending'])->name('order.pending');
+    Route::get('/order/error', [OrderController::class, 'orderError'])->name('order.error');
+    
+    // Order history & detail
+    Route::get('/orders', [OrderController::class, 'orders'])->name('orders');
+    Route::get('/order/{orderId}', [OrderController::class, 'orderDetail'])->name('order.detail');
+
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
-    Route::get('/orders', [HomeController::class, 'orders'])->name('orders');
-    
+
     // Logout
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
+
+// Payment status check (authenticated)
+Route::middleware('auth')->get('/payment/status/{orderId}', [PaymentController::class, 'checkStatus'])->name('payment.status');

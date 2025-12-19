@@ -55,7 +55,7 @@
 
                 <div class="order-detail-row">
                     <span class="label">Total Pembayaran</span>
-                    <span class="value price">{{ formatRupiah($order->total ?? 0) }}</span>
+                    <span class="value price">{{ formatRupiah($order->total_amount ?? 0) }}</span>
                 </div>
 
                 <div class="order-detail-row">
@@ -171,7 +171,7 @@
 
             <!-- Action Buttons -->
             <div class="action-buttons">
-                <a href="{{ route('order.track', $order->order_number ?? '') }}" class="btn-primary">
+                <a href="{{ route('home') }}" class="btn-primary">
                     <i class="fas fa-sync"></i>
                     Cek Status Pembayaran
                 </a>
