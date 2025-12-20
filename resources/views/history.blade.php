@@ -100,6 +100,17 @@
                     Mulai Belanja
                 </a>
             </div>
+
+            <!-- Empty State (Uncomment jika tidak ada pesanan) -->
+            <!-- 
+            <div class="empty-state">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>Belum Ada Pesanan</h3>
+                <p>Pesanan yang Anda buat akan muncul di sini</p>
+                <a href="{{ route('produk') }}" class="btn-primary">Mulai Belanja</a>
+            </div>
+            -->
+
         </div>
     </div>
 </main>
