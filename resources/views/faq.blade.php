@@ -117,7 +117,7 @@
                         <p>Anda dapat memesan melalui beberapa cara:</p>
                         <ol>
                             <li><strong>Website:</strong> Pilih produk, tambahkan ke keranjang, lalu checkout</li>
-                            <li><strong>WhatsApp:</strong> Hubungi kami di (0281) 6572506</li>
+                            <li><strong>WhatsApp:</strong> Hubungi kami di (62) 823-1402-7509</li>
                             <li><strong>Email:</strong> Kirim detail pesanan ke purwokerto@karyasatria.com</li>
                             <li><strong>Datang Langsung:</strong> Kunjungi kantor kami</li>
                         </ol>
@@ -384,7 +384,7 @@
                 <h2>Masih Punya Pertanyaan?</h2>
                 <p>Jangan ragu untuk menghubungi tim customer service kami. Kami siap membantu Anda!</p>
                 <div class="cta-buttons">
-                    <a href="https://wa.me/6281234567890" target="_blank" class="btn-whatsapp">
+                    <a href="https://wa.me/6282314027509" target="_blank" class="btn-whatsapp">
                         <i class="fab fa-whatsapp"></i>
                         Chat WhatsApp
                     </a>

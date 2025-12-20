@@ -99,7 +99,7 @@
             <!-- Customer Service -->
             <div class="customer-service-info">
                 <p>Butuh bantuan? Hubungi customer service kami</p>
-                <a href="https://wa.me/6281234567890" target="_blank" class="whatsapp-link">
+                <a href="https://wa.me/6282314027509" target="_blank" class="whatsapp-link">
                     <i class="fab fa-whatsapp"></i>
                     Chat WhatsApp
                 </a>

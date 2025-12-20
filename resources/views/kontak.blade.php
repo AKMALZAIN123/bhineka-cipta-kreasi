@@ -46,7 +46,7 @@
                     <p>Jl. Raya Prompong RT 04/04 Kutasari</p>
                     <p>Kec. Baturaden, Kab. Banyumas</p>
                     <p>Jawa Tengah</p>
-                    <a href="https://goo.gl/maps" target="_blank" class="card-link">
+                    <a href="https://karyasatria.com" target="_blank" class="card-link">
                         Lihat di Maps <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -107,7 +107,7 @@
                 <p class="map-subtitle">Kunjungi kantor kami di Purwokerto</p>
                 <div class="map-container">
                     <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126748.60650524333!2d109.13540725!3d-7.4298888!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e655c3f71f1f063%3A0x3027a76e352bea0!2sPurwokerto%2C%20Banyumas%20Regency%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1234567890" 
+                        src="https://karyasatria.com" 
                         width="100%" 
                         height="100%" 
                         style="border:0;" 
@@ -136,7 +136,7 @@
                     hingga pemasangan. Hubungi kami sekarang dan dapatkan solusi media luar ruang 
                     yang tepat untuk bisnis Anda!
                 </p>
-                <a href="https://wa.me/6281234567890" target="_blank" class="btn-whatsapp">
+                <a href="https://wa.me/6282314027509" target="_blank" class="btn-whatsapp">
                     <i class="fab fa-whatsapp"></i>
                     Hubungi via WhatsApp
                 </a>
