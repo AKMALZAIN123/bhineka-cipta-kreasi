@@ -32,14 +32,14 @@ class OrdersTable
                     ->badge()
                     ->color('primary'),
 
-                TextColumn::make('user.name')
+                TextColumn::make('nama_lengkap')
                     ->label('Customer')
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
                     ->icon('heroicon-o-user'),
                 
-                TextColumn::make('alamat')
+                TextColumn::make('alamat_lengkap')
                     ->label('Alamat')
                     ->limit(30)
                     ->tooltip(function (TextColumn $column): ?string {
@@ -52,7 +52,7 @@ class OrdersTable
                     ->searchable()
                     ->toggleable(),
 
-                TextColumn::make('no_telp')
+                TextColumn::make('nomor_telepon')
                     ->label('No. Telp')
                     ->searchable()
                     ->icon('heroicon-o-phone')
@@ -89,9 +89,10 @@ class OrdersTable
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'pending' => 'warning',
+                        'paid' => 'info',
                         'confirmed' => 'info',
-                        'processing' => 'primary',
-                        'shipped' => 'purple',
+                        'packing' => 'primary',
+                        'onroad' => 'purple',
                         'delivered' => 'success',
                         'cancelled' => 'danger',
                         default => 'gray',
@@ -99,8 +100,8 @@ class OrdersTable
                     ->icon(fn (string $state): string => match ($state) {
                         'pending' => 'heroicon-o-clock',
                         'confirmed' => 'heroicon-o-check-circle',
-                        'processing' => 'heroicon-o-arrow-path',
-                        'shipped' => 'heroicon-o-truck',
+                        'packing' => 'heroicon-o-arrow-path',
+                        'onroad' => 'heroicon-o-truck',
                         'delivered' => 'heroicon-o-check-badge',
                         'cancelled' => 'heroicon-o-x-circle',
                         default => 'heroicon-o-question-mark-circle',
@@ -126,9 +127,10 @@ class OrdersTable
                     ->label('Status')
                     ->options([
                         'pending' => 'Pending',
+                        'paid' => 'Paid',
                         'confirmed' => 'Confirmed',
-                        'processing' => 'Processing',
-                        'shipped' => 'Shipped',
+                        'packing' => 'Packing',
+                        'onroad' => 'On Road',
                         'delivered' => 'Delivered',
                         'cancelled' => 'Cancelled',
                     ])
@@ -213,23 +215,23 @@ class OrdersTable
                         ->color('success')
                         ->requiresConfirmation()
                         ->action(fn ($record) => $record->update(['status' => 'confirmed']))
-                        ->visible(fn ($record) => $record->status === 'pending'),
-
-                    Action::make('process')
-                        ->label('Process Order')
+                        ->visible(fn ($record) => in_array($record->status, ['pending', 'paid'])),
+                        
+                    Action::make('packing')
+                        ->label('Packing Order')
                         ->icon('heroicon-o-arrow-path')
                         ->color('primary')
                         ->requiresConfirmation()
-                        ->action(fn ($record) => $record->update(['status' => 'processing']))
+                        ->action(fn ($record) => $record->update(['status' => 'packing']))
                         ->visible(fn ($record) => $record->status === 'confirmed'),
 
-                    Action::make('ship')
+                    Action::make('onroad')
                         ->label('Ship Order')
                         ->icon('heroicon-o-truck')
                         ->color('purple')
                         ->requiresConfirmation()
-                        ->action(fn ($record) => $record->update(['status' => 'shipped']))
-                        ->visible(fn ($record) => $record->status === 'processing'),
+                        ->action(fn ($record) => $record->update(['status' => 'onroad']))
+                        ->visible(fn ($record) => $record->status === 'packing'),
 
                     Action::make('deliver')
                         ->label('Mark as Delivered')
@@ -237,7 +239,7 @@ class OrdersTable
                         ->color('success')
                         ->requiresConfirmation()
                         ->action(fn ($record) => $record->update(['status' => 'delivered']))
-                        ->visible(fn ($record) => $record->status === 'shipped'),
+                        ->visible(fn ($record) => $record->status === 'onroad'),
 
                     Action::make('cancel')
                         ->label('Cancel Order')
@@ -251,8 +253,6 @@ class OrdersTable
                 ->icon('heroicon-m-ellipsis-horizontal')
                 ->button()
                 ->label('Actions'),
-
-                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -269,8 +269,6 @@ class OrdersTable
                         ->color('danger')
                         ->requiresConfirmation()
                         ->action(fn ($records) => $records->each->update(['status' => 'cancelled'])),
-
-                    DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([

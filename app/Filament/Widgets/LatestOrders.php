@@ -48,7 +48,7 @@ class LatestOrders extends BaseWidget
                         'pending' => 'warning',
                         'confirmed' => 'info',
                         'processing' => 'primary',
-                        'shipped' => 'purple',
+                        'onroad' => 'purple',
                         'delivered' => 'success',
                         'cancelled' => 'danger',
                         default => 'gray',

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Cart;
+use App\Models\CartItem;
+use App\Models\Payment;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,10 +19,44 @@ class OrderController extends Controller
     /**
      * Show checkout page
      */
-    public function checkout()
+   public function checkout(Request $request)
     {
         $user = Auth::user();
-        
+        $shippingCost = 10000;
+
+        $mode = $request->query('mode', 'cart'); 
+
+        if ($mode === 'buy_now') {
+            $buyNow = session('buy_now');
+
+            if (!$buyNow) {
+                return redirect()->route('produk')->with('error', 'Sesi Buy Now sudah habis. Silakan pilih produk lagi.');
+            }
+
+            $product = Product::findOrFail($buyNow['product_id']);
+
+            if (($product->availability ?? 'available') !== 'available') {
+                session()->forget('buy_now');
+                return redirect()->route('produk')->with('error', 'Produk tidak tersedia');
+            }
+
+            $quantity = max(1, (int) $buyNow['quantity']);
+            $subtotal = $product->price * $quantity;
+            $total    = $subtotal + $shippingCost;
+
+            return view('checkout', [
+                'user'         => $user,
+                'mode'         => 'buy_now',
+                'product'      => $product,
+                'quantity'     => $quantity,
+                'subtotal'     => $subtotal,
+                'shippingCost' => $shippingCost,
+                'total'        => $total,
+            ]);
+        }
+
+        session()->forget('buy_now');
+
         $cart = Cart::with(['cartItems.product'])
             ->where('user_id', $user->user_id)
             ->first();
@@ -34,10 +70,39 @@ class OrderController extends Controller
             $subtotal += $item->product->price * $item->quantity;
         }
 
-        $shippingCost = 10000;
         $total = $subtotal + $shippingCost;
 
-        return view('checkout', compact('cart', 'user', 'subtotal', 'shippingCost', 'total'));
+        return view('checkout', [
+            'cart'         => $cart,
+            'user'         => $user,
+            'mode'         => 'cart',
+            'subtotal'     => $subtotal,
+            'shippingCost' => $shippingCost,
+            'total'        => $total,
+        ]);
+    }
+
+    public function buyNow(Request $request)
+    {
+        $data = $request->validate([
+            'product_id' => 'required|exists:products,product_id',
+            'quantity'   => 'required|integer|min:1',
+        ]);
+
+        $product = Product::findOrFail($data['product_id']);
+
+        if (($product->availability ?? 'available') !== 'available') {
+            return back()->with('error', 'Produk tidak tersedia');
+        }
+
+        session([
+            'buy_now' => [
+                'product_id' => $product->product_id,
+                'quantity'   => (int) $data['quantity'],
+            ]
+        ]);
+
+        return redirect()->route('checkout', ['mode' => 'buy_now']);
     }
 
     /**
@@ -56,10 +121,11 @@ class OrderController extends Controller
                 'province' => 'required|string|max:100',
                 'postal_code' => 'required|string|max:10',
                 'address_notes' => 'nullable|string|max:500',
+                'mode' => 'nullable|in:cart,buy_now', // ✅
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation Error: ' . json_encode($e->errors()));
-            
+
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
@@ -74,33 +140,72 @@ class OrderController extends Controller
             DB::beginTransaction();
 
             $user = Auth::user();
-            Log::info('Checkout - User ID: ' . $user->user_id);
+            $mode = $validated['mode'] ?? 'cart';
+            Log::info("Checkout - User ID: {$user->user_id} | Mode: {$mode}");
 
-            // Get cart
-            $cart = Cart::with(['cartItems.product'])
-                ->where('user_id', $user->user_id)
-                ->first();
-
-            if (!$cart || $cart->cartItems->isEmpty()) {
-                throw new \Exception('Keranjang tidak ditemukan atau kosong');
-            }
-
-            Log::info('Checkout - Cart items count: ' . $cart->cartItems->count());
-
-            // Calculate total
-            $subtotal = 0;
-            foreach ($cart->cartItems as $item) {
-                if (!$item->product) {
-                    throw new \Exception('Produk tidak ditemukan untuk item cart ID: ' . $item->cart_item_id);
-                }
-                $subtotal += $item->product->price * $item->quantity;
-            }
             $shippingCost = 10000;
+
+            $itemsForOrder = [];
+
+            if ($mode === 'buy_now') {
+                $buyNow = session('buy_now');
+
+                if (!$buyNow || empty($buyNow['product_id']) || empty($buyNow['quantity'])) {
+                    throw new \Exception('Sesi Buy Now tidak ditemukan / sudah kadaluarsa');
+                }
+
+                $product = Product::findOrFail($buyNow['product_id']);
+
+                if (($product->availability ?? 'available') !== 'available') {
+                    session()->forget('buy_now');
+                    throw new \Exception('Produk tidak tersedia');
+                }
+
+                $qty = (int) $buyNow['quantity'];
+                if ($qty < 1) $qty = 1;
+
+                $itemsForOrder[] = [
+                    'product' => $product,
+                    'quantity' => $qty,
+                ];
+
+                Log::info('Checkout - BuyNow item: product_id=' . $product->product_id . ' qty=' . $qty);
+
+            } else {
+                $cart = Cart::with(['cartItems.product'])
+                    ->where('user_id', $user->user_id)
+                    ->first();
+
+                if (!$cart || $cart->cartItems->isEmpty()) {
+                    throw new \Exception('Keranjang tidak ditemukan atau kosong');
+                }
+
+                Log::info('Checkout - Cart items count: ' . $cart->cartItems->count());
+
+                foreach ($cart->cartItems as $item) {
+                    if (!$item->product) {
+                        throw new \Exception('Produk tidak ditemukan untuk item cart ID: ' . ($item->cart_item_id ?? '-'));
+                    }
+
+                    if (($item->product->availability ?? 'available') !== 'available') {
+                        throw new \Exception('Ada produk di keranjang yang tidak tersedia: ' . $item->product->name);
+                    }
+
+                    $itemsForOrder[] = [
+                        'product' => $item->product,
+                        'quantity' => (int) $item->quantity,
+                    ];
+                }
+            }
+
+            $subtotal = 0;
+            foreach ($itemsForOrder as $row) {
+                $subtotal += $row['product']->price * $row['quantity'];
+            }
             $totalAmount = $subtotal + $shippingCost;
 
             Log::info('Checkout - Total amount: ' . $totalAmount);
 
-            // Create Order
             $order = Order::create([
                 'user_id' => $user->user_id,
                 'order_date' => now(),
@@ -119,33 +224,33 @@ class OrderController extends Controller
 
             Log::info('Checkout - Order created: ' . $order->order_id);
 
-            // Create Order Items
-            foreach ($cart->cartItems as $item) {
+            foreach ($itemsForOrder as $row) {
+                $product = $row['product'];
+                $qty = $row['quantity'];
+
                 OrderItem::create([
                     'order_id' => $order->order_id,
-                    'product_id' => $item->product_id,
-                    'quantity' => $item->quantity,
-                    'sub_total' => $item->product->price * $item->quantity,
+                    'product_id' => $product->product_id,
+                    'quantity' => $qty,
+                    'sub_total' => $product->price * $qty,
                 ]);
             }
 
             Log::info('Checkout - Order items created');
 
-            // Generate Midtrans Snap Token
             Log::info('Checkout - Generating Snap Token');
-            
+
             try {
                 $paymentController = new PaymentController();
                 $snapToken = $paymentController->generateSnapToken($order, $validated);
-                
+
                 Log::info('Checkout - Snap Token generated successfully');
             } catch (\Exception $e) {
                 Log::error('Snap Token Generation Failed: ' . $e->getMessage());
                 throw new \Exception('Gagal membuat token pembayaran: ' . $e->getMessage());
             }
 
-            // Create Payment Record with snap_token
-            $payment = \App\Models\Payment::create([
+            $payment = Payment::create([
                 'order_id' => $order->order_id,
                 'method' => 'midtrans',
                 'snap_token' => $snapToken,
@@ -155,13 +260,19 @@ class OrderController extends Controller
 
             Log::info('Checkout - Payment created: ' . $payment->payment_id);
 
-            // Delete cart items after successful order
-            $deletedCount = $cart->cartItems()->delete();
-            Log::info('Checkout - Cart items deleted: ' . $deletedCount);
+            if ($mode === 'cart') {
+                $cart = $cart ?? Cart::where('user_id', $user->user_id)->first();
+                if ($cart) {
+                    $deletedCount = $cart->cartItems()->delete();
+                    Log::info('Checkout - Cart items deleted: ' . $deletedCount);
+                }
+            } else {
+                session()->forget('buy_now');
+                Log::info('Checkout - buy_now session cleared');
+            }
 
             DB::commit();
 
-            // Return JSON for AJAX request
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,
@@ -171,7 +282,6 @@ class OrderController extends Controller
                 ]);
             }
 
-            // If not AJAX, redirect to payment page
             return view('payment', compact('order', 'snapToken', 'payment'));
 
         } catch (\Exception $e) {
@@ -179,7 +289,7 @@ class OrderController extends Controller
             Log::error('Checkout error: ' . $e->getMessage());
             Log::error('Checkout error file: ' . $e->getFile() . ' line: ' . $e->getLine());
             Log::error('Checkout error trace: ' . $e->getTraceAsString());
-            
+
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
@@ -187,11 +297,11 @@ class OrderController extends Controller
                     'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
                 ], 500);
             }
-            
             return redirect()->route('cart')
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+
 
     /**
      * Order success page (after payment)
@@ -222,10 +332,7 @@ class OrderController extends Controller
     public function orderPending(Request $request)
     {
         $orderId = $request->query('order_id');
-        
-        if (!$orderId) {
-            return redirect()->route('home');
-        }
+        if (!$orderId) return redirect()->route('home');
 
         $order = Order::with(['orderItems.product', 'payment'])
             ->where('order_id', $orderId)
@@ -236,8 +343,17 @@ class OrderController extends Controller
             return redirect()->route('home')->with('error', 'Pesanan tidak ditemukan');
         }
 
+        if ($order->status === 'paid') {
+            return redirect()->route('order.success', ['order_id' => $order->order_id]);
+        }
+
+        if (in_array($order->status, ['cancelled', 'failed'])) {
+            return redirect()->route('order.error', ['order_id' => $order->order_id]);
+        }
+
         return view('order-pending', compact('order'));
     }
+
 
     /**
      * Order error page (when payment failed)
@@ -293,4 +409,12 @@ class OrderController extends Controller
 
         return view('order-detail', compact('order'));
     }
+
+    public function checkStatus(Order $order)
+    {
+        return response()->json([
+            'status' => $order->status
+        ]);
+    }
+
 }

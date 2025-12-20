@@ -38,7 +38,7 @@
                         <div class="product-badge">{{ $product->badge }}</div>
                     @endif
 
-                    <img src="{{ $product->image_url }}" alt="{{ $product->name }}" id="mainImage">
+                    <img src="{{ $product->image_url ? asset('storage/'.$product->image_url) : asset('img/default.png') }}" alt="{{ $product->name }}" id="mainImage">
 
                     <button class="zoom-btn" id="zoomBtn">
                         <i class="fas fa-search-plus"></i>
@@ -48,7 +48,7 @@
                 <div class="thumbnail-gallery">
                     <!-- Thumbnail utama sebagai contoh -->
                     <div class="thumbnail active">
-                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
+                        <img src="{{ $product->image_url ? asset('storage/'.$product->image_url) : asset('img/default.png') }}" alt="{{ $product->name }}">
                     </div>
                     <!-- Jika punya multiple image galeri, tinggal loop di sini -->
                 </div>
@@ -60,23 +60,10 @@
                 <h1 class="product-title">{{ $product->name }}</h1>
 
                 <div class="product-rating-section">
-                    <div class="rating-stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                        <span class="rating-number">4.5</span>
-                    </div>
-                    <div class="rating-divider">|</div>
-                    <div class="rating-reviews">
-                        <i class="far fa-comment"></i>
-                        <span>127 Ulasan</span>
-                    </div>
                     <div class="rating-divider">|</div>
                     <div class="rating-sold">
                         <i class="fas fa-box"></i>
-                        <span>{{ $product->sold ?? 0 }} Terjual</span>
+                        <span>{{ $product->sold }} Terjual</span>
                     </div>
                 </div>
 
@@ -104,7 +91,7 @@
                         Jumlah
                     </label>
                     <div class="quantity-selector">
-                        <button class="qty-btn" id="qtyMinus"><i class="fas fa-minus"></i></button>
+                        <button class="qty-btn" id="qtyMinus" {{ (($product->availability ?? 'available') === 'available') ? '' : 'disabled' }}><i class="fas fa-minus"></i></button>
                         <input type="number"
                             class="qty-input"
                             id="qtyInput"
@@ -112,12 +99,20 @@
                             value="1"
                             min="1"
                             max="{{ $product->stock ?? 100 }}"
+                            {{ (($product->availability ?? 'available') === 'available') ? '' : 'disabled' }}
                             form="cartForm">
-                        <button class="qty-btn" id="qtyPlus"><i class="fas fa-plus"></i></button>
-                        <span class="stock-info">Stok: <strong>{{ $product->stock ?? 0 }}</strong></span>
+                        <button class="qty-btn" id="qtyPlus" {{ (($product->availability ?? 'available') === 'available') ? '' : 'disabled' }}><i class="fas fa-plus"></i></button>
+                        @php
+                            $isAvailable = ($product->availability ?? 'available') === 'available';
+                        @endphp
+
+                        <span class="stock-info">
+                            Ketersediaan:
+                            <strong>{{ $isAvailable ? 'Tersedia' : 'Tidak Tersedia' }}</strong>
+                        </span>
                     </div>
                 </div>
-
+                
                 <!-- Action Buttons -->
                 <div class="product-actions">
                     <form action="{{ route('cart.add') }}"
@@ -129,13 +124,23 @@
                         <button type="submit"
                                 class="btn-add-cart"
                                 id="btnAddCart"
-                                data-auth="{{ auth()->check() ? 'true' : 'false' }}">
+                                data-auth="{{ auth()->check() ? 'true' : 'false' }}"
+                                {{ (($product->availability ?? 'available') === 'available') ? '' : 'disabled' }}>
                             <i class="fas fa-shopping-cart"></i> Tambah ke Keranjang
                         </button>
                     </form>
-                    <button class="btn-buy-now" id="btnBuyNow">
-                        <i class="fas fa-bolt"></i> Beli Sekarang
-                    </button>
+                    <!-- <button class="btn-buy-now" id="btnBuyNow" {{ (($product->availability ?? 'available') === 'available') ? '' : 'disabled' }}>
+                        <i class="fas fa-bolt"></i>  {{ $isAvailable ? 'Beli Sekarang' : 'Tidak Tersedia' }}
+                    </button> -->
+                    <form action="{{ route('buy.now') }}" method="POST" class="buy-now-form" id="buyNowForm">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $product->product_id }}">
+                        <input type="hidden" name="quantity" id="buyNowQty" value="1">
+
+                        <button type="submit" class="btn-buy-now" {{ (($product->availability ?? 'available') === 'available') ? '' : 'disabled' }}>
+                            <i class="fas fa-bolt"></i> Beli Sekarang
+                        </button>
+                    </form>
                 </div>
 
                 <!-- Product Features -->
@@ -185,9 +190,6 @@
                 <button class="tab-btn" data-tab="specifications">
                     <i class="fas fa-list-ul"></i> Spesifikasi
                 </button>
-                <button class="tab-btn" data-tab="reviews">
-                    <i class="fas fa-star"></i> Ulasan (127)
-                </button>
                 <button class="tab-btn" data-tab="custom">
                     <i class="fas fa-edit"></i> Custom Order
                 </button>
@@ -204,12 +206,6 @@
                 <div class="tab-content" id="specifications">
                     <h3>Spesifikasi</h3>
                     <p>Tambahkan tabel spesifikasi berdasarkan database jika nanti dibuat.</p>
-                </div>
-
-                <!-- Reviews Tab -->
-                <div class="tab-content" id="reviews">
-                    <h3>Ulasan Pelanggan</h3>
-                    <p>Review pelanggan akan ditampilkan di sini.</p>
                 </div>
 
                 <!-- Custom Order Tab -->

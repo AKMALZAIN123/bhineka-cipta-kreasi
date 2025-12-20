@@ -1,42 +1,3 @@
-// ===== SAMPLE ORDER DATA =====
-const orderData = {
-    orderNumber: 'ORD-2024-001234',
-    date: '10 Desember 2024, 14:30 WIB',
-    status: 'onroad', // packaging, onroad, delivered
-    items: [
-        {
-            name: 'Banner X Premium',
-            specs: 'Ukuran 160x60cm, Material Premium',
-            qty: 2,
-            price: 125000,
-            image: 'https://images.unsplash.com/photo-1611329857570-f02f340e7378?w=100'
-        },
-        {
-            name: 'Kartu Undangan Custom',
-            specs: 'Desain custom, cetak 100 pcs',
-            qty: 1,
-            price: 350000,
-            image: 'https://images.unsplash.com/photo-1530435460869-d13625c69bbf?w=100'
-        }
-    ],
-    shipping: {
-        recipient: 'John Doe',
-        phone: '081234567890',
-        address: 'Jl. Sudirman No. 123, Gedung ABC Lt. 5, Jakarta Selatan, DKI Jakarta 12190'
-    },
-    payment: {
-        subtotal: 600000,
-        shippingCost: 0,
-        total: 600000,
-        method: 'Midtrans'
-    },
-    timeline: {
-        packaging: '10 Des 2024, 15:00',
-        onroad: '11 Des 2024, 09:00',
-        delivered: null
-    }
-};
-
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', function() {
     loadOrderData();
@@ -71,25 +32,6 @@ function loadOrderData() {
     document.getElementById('subtotal').textContent = formatCurrency(orderData.payment.subtotal);
     document.getElementById('shippingCost').textContent = orderData.payment.shippingCost === 0 ? 'Gratis' : formatCurrency(orderData.payment.shippingCost);
     document.getElementById('totalAmount').textContent = formatCurrency(orderData.payment.total);
-}
-
-// ===== RENDER ORDER ITEMS =====
-function renderOrderItems() {
-    const itemsList = document.getElementById('orderItemsList');
-    
-    itemsList.innerHTML = orderData.items.map(item => `
-        <div class="item-row">
-            <img src="${item.image}" alt="${item.name}" class="item-image">
-            <div class="item-details">
-                <div class="item-name">${item.name}</div>
-                <div class="item-specs">${item.specs}</div>
-            </div>
-            <div class="item-price-info">
-                <div class="item-qty">${item.qty}x</div>
-                <div class="item-price">${formatCurrency(item.price * item.qty)}</div>
-            </div>
-        </div>
-    `).join('');
 }
 
 // ===== UPDATE PROGRESS TRACKER =====

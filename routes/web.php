@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CartWebController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 
 // Public pages
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -18,10 +19,6 @@ Route::get('/detail', [HomeController::class, 'detail'])->name('detail');
 Route::get('/privasi', [HomeController::class, 'privasi'])->name('privasi');
 Route::get('/syarat', [HomeController::class, 'syarat'])->name('syarat');
 Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
-Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout');
-Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
-Route::get('/history', [HomeController::class, 'history'])->name('history');
-Route::get('/detail-history', [HomeController::class, 'detail-history'])->name('detail history');
 
 // Authentication pages (Blade) - untuk guest
 Route::middleware('guest')->group(function () {
@@ -40,14 +37,20 @@ Route::middleware('guest')->group(function () {
 
 // Protected pages - untuk user yang sudah login
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+    Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+   
     Route::get('/cart', [HomeController::class, 'cart'])->name('cart');
     Route::post('/cart/add', [CartWebController::class, 'add'])->name('cart.add');
-    Route::post('/cart/update/{id}', [CartWebController::class, 'update'])->name('cart.update');
+    Route::patch('/cart/update/{id}', [CartWebController::class, 'update'])->name('cart.update');
     Route::delete('/cart/delete/{id}', [CartWebController::class, 'delete'])->name('cart.delete');
     
     // Checkout & Order routes
+    Route::post('/buy-now', [OrderController::class, 'buyNow'])->name('buy.now');
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
     Route::post('/checkout/process', [OrderController::class, 'processCheckout'])->name('checkout.process');
+    Route::get('/order/check-status/{order}', [OrderController::class, 'checkStatus'])->name('order.check-status');
     Route::get('/order/success', [OrderController::class, 'orderSuccess'])->name('order.success');
     Route::get('/order/pending', [OrderController::class, 'orderPending'])->name('order.pending');
     Route::get('/order/error', [OrderController::class, 'orderError'])->name('order.error');
@@ -55,8 +58,8 @@ Route::middleware('auth')->group(function () {
     // Order history & detail
     Route::get('/orders', [OrderController::class, 'orders'])->name('orders');
     Route::get('/order/{orderId}', [OrderController::class, 'orderDetail'])->name('order.detail');
-
-    Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+    Route::get('/history', [HomeController::class, 'history'])->name('history');
+    Route::get('/history/{order}', [HomeController::class, 'detailHistory'])->name('history.detail');
 
     // Logout
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

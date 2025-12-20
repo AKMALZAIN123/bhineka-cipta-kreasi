@@ -19,6 +19,10 @@ class CartWebController extends Controller
         $user = auth()->user();
         $product = Product::find($request->product_id);
 
+        if ($product->availability !== 'available') {
+            return back()->with('error', 'Produk tidak tersedia');
+        }      
+
         // create or find cart
         $cart = Cart::firstOrCreate(
             ['user_id' => $user->user_id],
@@ -52,11 +56,20 @@ class CartWebController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate(['quantity' => 'required|integer|min:1']);
+        $item = CartItem::with('product', 'cart')->findOrFail($id);
 
-        $item = CartItem::findOrFail($id);
-        $item->quantity = $request->quantity;
-        $item->subtotal = $item->quantity * $item->product->price;
+        $action = $request->input('action');
+
+        if ($action === 'increase') {
+            $item->quantity += 1;
+        } elseif ($action === 'decrease') {
+            $item->quantity = max(1, $item->quantity - 1);
+        } else {
+            $request->validate(['quantity' => 'required|integer|min:1|max:99']);
+            $item->quantity = (int) $request->quantity;
+        }
+
+        $item->subtotal = $item->quantity * $item->product->price; 
         $item->save();
 
         $item->cart->update([
@@ -65,6 +78,7 @@ class CartWebController extends Controller
 
         return back()->with('success', 'Jumlah produk diperbarui');
     }
+
 
     public function delete($id)
     {

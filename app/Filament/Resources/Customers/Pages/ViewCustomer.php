@@ -53,18 +53,6 @@ class ViewCustomer extends ViewRecord
                     ]))
                     ->visible(fn () => $this->record->orders()->count() > 0),
 
-                Action::make('export_data')
-                    ->label('Export Customer Data')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->color('success')
-                    ->action(function () {
-                        // Implement export for single customer
-                        Notification::make()
-                            ->title('Customer data exported!')
-                            ->success()
-                            ->send();
-                    }),
-
                 Action::make('add_notes')
                     ->label('Add Notes')
                     ->icon('heroicon-o-document-text')
@@ -80,18 +68,6 @@ class ViewCustomer extends ViewRecord
                         // Implement notes saving
                         Notification::make()
                             ->title('Notes saved!')
-                            ->success()
-                            ->send();
-                    }),
-
-                Action::make('generate_report')
-                    ->label('Generate Report')
-                    ->icon('heroicon-o-document-chart-bar')
-                    ->color('purple')
-                    ->action(function () {
-                        // Implement report generation
-                        Notification::make()
-                            ->title('Report generated!')
                             ->success()
                             ->send();
                     }),

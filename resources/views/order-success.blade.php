@@ -86,7 +86,7 @@
 
             <!-- Action Buttons -->
             <div class="action-buttons">
-                <a href="{{ route('home') }}" class="btn-primary">
+                <a href="{{route('history.detail', $order->order_id) }}" class="btn-primary">
                     <i class="fas fa-map-marker-alt"></i>
                     Lacak Pesanan
                 </a>

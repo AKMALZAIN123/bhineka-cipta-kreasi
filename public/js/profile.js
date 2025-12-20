@@ -1,37 +1,3 @@
-// ===== USER DATA =====
-const userData = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '081234567890',
-    birthdate: '1990-01-01',
-    company: 'PT. Example Indonesia'
-};
-
-const addresses = [
-    {
-        id: 1,
-        name: 'Alamat Kantor',
-        recipient: 'John Doe',
-        phone: '081234567890',
-        address: 'Jl. Sudirman No. 123, Gedung ABC Lt. 5',
-        city: 'Jakarta Selatan',
-        province: 'DKI Jakarta',
-        postalCode: '12190',
-        isPrimary: true
-    },
-    {
-        id: 2,
-        name: 'Alamat Rumah',
-        recipient: 'John Doe',
-        phone: '081234567890',
-        address: 'Jl. Gatot Subroto No. 456',
-        city: 'Jakarta Selatan',
-        province: 'DKI Jakarta',
-        postalCode: '12930',
-        isPrimary: false
-    }
-];
-
 // ===== INIT ON PAGE LOAD =====
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Page loaded, initializing...');
@@ -295,3 +261,44 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// ===== AVATAR (LARAVEL VERSION) =====
+function changeAvatar() {
+    const input = document.getElementById('profilePhotoInput');
+    const img = document.getElementById('avatarImage');
+
+    if (!input) {
+        console.error('profilePhotoInput not found');
+        return;
+    }
+
+    input.click();
+
+    input.onchange = function () {
+        const file = input.files && input.files[0];
+        if (!file) return;
+
+        // validasi ukuran (2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            showNotification('Ukuran file maksimal 2MB', 'error');
+            input.value = '';
+            return;
+        }
+
+        // validasi tipe file
+        if (!file.type.startsWith('image/')) {
+            showNotification('File harus berupa gambar', 'error');
+            input.value = '';
+            return;
+        }
+
+        // preview langsung
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            if (img) img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        showNotification('Foto siap diunggah. Klik "Simpan Perubahan".', 'info');
+    };
+}

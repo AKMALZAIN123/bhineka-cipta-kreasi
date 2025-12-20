@@ -102,12 +102,25 @@ viewBtns.forEach(btn => {
 
 // Sort Select
 const sortSelect = document.getElementById('sortSelect');
-sortSelect.addEventListener('change', (e) => {
-    const sortValue = e.target.value;
-    // TODO: Implement actual sorting
-    console.log('Sorting by:', sortValue);
-    showNotification(`Produk diurutkan berdasarkan: ${e.target.options[e.target.selectedIndex].text}`);
-});
+
+if (sortSelect) {
+    sortSelect.addEventListener('change', (e) => {
+        const sortValue = e.target.value;
+        
+        // Get current URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Update or add sort parameter
+        if (sortValue === 'default') {
+            urlParams.delete('sort');
+        } else {
+            urlParams.set('sort', sortValue);
+        }
+        
+        // Redirect to new URL with sort parameter
+        window.location.href = window.location.pathname + '?' + urlParams.toString();
+    });
+}
 
 // Wishlist Toggle
 const wishlistBtns = document.querySelectorAll('.wishlist-btn');

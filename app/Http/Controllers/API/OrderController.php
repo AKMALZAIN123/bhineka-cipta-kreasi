@@ -119,7 +119,7 @@ class OrderController extends Controller
     {
         try {
             $request->validate([
-                'status' => 'nullable|in:pending,confirmed,processing,shipped,delivered,cancelled',
+                'status' => 'nullable|in:pending,paid,confirmed,packing,onroad,delivered,completed,cancelled',
                 'per_page' => 'nullable|integer|min:1|max:100',
             ]);
 

@@ -25,23 +25,23 @@ class EditOrder extends EditRecord
                     ->color('success')
                     ->requiresConfirmation()
                     ->action(fn () => $this->record->update(['status' => 'confirmed']))
-                    ->visible(fn () => $this->record->status === 'pending'),
+                    ->visible(fn () => in_array($this->record->status, ['pending', 'paid'])),
 
-                Action::make('process')
-                    ->label('Process Order')
+                Action::make('packing')
+                    ->label('packing Order')
                     ->icon('heroicon-o-arrow-path')
                     ->color('primary')
                     ->requiresConfirmation()
-                    ->action(fn () => $this->record->update(['status' => 'processing']))
+                    ->action(fn () => $this->record->update(['status' => 'packing']))
                     ->visible(fn () => $this->record->status === 'confirmed'),
 
-                Action::make('ship')
-                    ->label('Ship Order')
+                Action::make('onroad')
+                    ->label('onroad Order')
                     ->icon('heroicon-o-truck')
                     ->color('purple')
                     ->requiresConfirmation()
-                    ->action(fn () => $this->record->update(['status' => 'shipped']))
-                    ->visible(fn () => $this->record->status === 'processing'),
+                    ->action(fn () => $this->record->update(['status' => 'onroad']))
+                    ->visible(fn () => $this->record->status === 'packing'),
 
                 Action::make('deliver')
                     ->label('Mark as Delivered')
@@ -49,7 +49,7 @@ class EditOrder extends EditRecord
                     ->color('success')
                     ->requiresConfirmation()
                     ->action(fn () => $this->record->update(['status' => 'delivered']))
-                    ->visible(fn () => $this->record->status === 'shipped'),
+                    ->visible(fn () => $this->record->status === 'onroad'),
 
                 Action::make('cancel')
                     ->label('Cancel Order')
@@ -60,8 +60,6 @@ class EditOrder extends EditRecord
                     ->action(fn () => $this->record->update(['status' => 'cancelled']))
                     ->visible(fn () => !in_array($this->record->status, ['delivered', 'cancelled'])),
             ]),
-
-            DeleteAction::make(),
         ];
     }
 

@@ -49,13 +49,27 @@
                 </div>
                 <div class="toolbar-right">
                     <select class="sort-select" id="sortSelect">
-                        <option value="default">Urutkan: Default</option>
-                        <option value="popular">Paling Populer</option>
-                        <option value="newest">Terbaru</option>
-                        <option value="price-low">Harga: Rendah ke Tinggi</option>
-                        <option value="price-high">Harga: Tinggi ke Rendah</option>
-                        <option value="name-asc">Nama: A-Z</option>
-                        <option value="name-desc">Nama: Z-A</option>
+                        <option value="default" {{ request('sort') == 'default' || !request('sort') ? 'selected' : '' }}>
+                            Urutkan: Default
+                        </option>
+                        <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>
+                            Paling Populer
+                        </option>
+                        <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>
+                            Terbaru
+                        </option>
+                        <option value="price-low" {{ request('sort') == 'price-low' ? 'selected' : '' }}>
+                            Harga: Rendah ke Tinggi
+                        </option>
+                        <option value="price-high" {{ request('sort') == 'price-high' ? 'selected' : '' }}>
+                            Harga: Tinggi ke Rendah
+                        </option>
+                        <option value="name-asc" {{ request('sort') == 'name-asc' ? 'selected' : '' }}>
+                            Nama: A-Z
+                        </option>
+                        <option value="name-desc" {{ request('sort') == 'name-desc' ? 'selected' : '' }}>
+                            Nama: Z-A
+                        </option>
                     </select>
                 </div>
             </div>
@@ -74,7 +88,7 @@
                         </button>
 
                         <div class="product-image">
-                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
+                            <img src="{{ $product->image_url ? asset('storage/'.$product->image_url) : asset('img/default.png') }}" alt="{{ $product->name }}">
                             <div class="product-overlay">
                                 <button class="btn-quick-view" onclick="window.location.href='{{ route('produk.detail', $product->product_id) }}'">
                                     <i class="fas fa-eye"></i>
@@ -128,7 +142,7 @@
 
             <!-- Pagination -->
             <div class="pagination">
-                {{ $products->links('pagination::bootstrap-5') }}
+                {{ $products->appends(request()->query())->links('pagination::bootstrap-5') }}
             </div>
 
         </div>
@@ -136,5 +150,42 @@
     @endsection
 
     @push('scripts')
+    <script>
+        sortSelect.addEventListener('change', (e) => {
+            const sortValue = e.target.value;
+            const searchValue = document.getElementById('searchInput')?.value || '';
+            
+            // Show loading indicator
+            showNotification('Mengurutkan produk...', 'info');
+            
+            // Build URL with parameters
+            const params = new URLSearchParams();
+            if (sortValue !== 'default') params.set('sort', sortValue);
+            if (searchValue) params.set('search', searchValue);
+            
+            // Fetch sorted products
+            fetch(`/produk?${params.toString()}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Parse and update products grid
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newGrid = doc.getElementById('productsGrid');
+                
+                if (newGrid) {
+                    document.getElementById('productsGrid').innerHTML = newGrid.innerHTML;
+                    showNotification(`Produk diurutkan berdasarkan: ${e.target.options[e.target.selectedIndex].text}`, 'success');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Terjadi kesalahan saat mengurutkan produk', 'error');
+            });
+        });
+    </script>
     <script src="{{ asset('js/produk.js') }}"></script>
     @endpush
