@@ -18,21 +18,11 @@ function viewOrderDetail(orderNumber) {
     // window.location.href = '/order/detail/' + orderNumber;
 }
 
-// ===== FETCH FROM API (Optional) =====
-async function fetchOrdersFromAPI() {
-    try {
-        // Fetch only paid orders
-        // const response = await fetch('/api/orders?status=paid', {
-        //     headers: {
-        //         'Authorization': 'Bearer ' + localStorage.getItem('token')
-        //     }
-        // });
-        // const data = await response.json();
-        // return data.orders;
-        
-        return orders;
-    } catch (error) {
-        console.error('Error fetching orders:', error);
-        return [];
-    }
-}
+// Page load animation
+window.addEventListener('load', () => {
+    document.body.style.opacity = '0';
+    setTimeout(() => {
+        document.body.style.transition = 'opacity 0.5s';
+        document.body.style.opacity = '1';
+    }, 100);
+});

@@ -44,53 +44,27 @@ function updateProgressTracker() {
     allSteps.forEach(step => {
         step.classList.remove('completed', 'active');
     });
-
-    // Update based on current status
-    if (status === 'packaging') {
-        document.getElementById('step-packaging').classList.add('active');
-        document.getElementById('packaging-date').textContent = timeline.packaging || 'Sedang diproses';
-    } 
-    else if (status === 'onroad') {
-        document.getElementById('step-packaging').classList.add('completed');
-        document.getElementById('step-onroad').classList.add('active');
-        document.getElementById('packaging-date').textContent = timeline.packaging;
-        document.getElementById('onroad-date').textContent = timeline.onroad || 'Sedang dalam pengiriman';
-    } 
-    else if (status === 'delivered') {
-        document.getElementById('step-packaging').classList.add('completed');
-        document.getElementById('step-onroad').classList.add('completed');
-        document.getElementById('step-delivered').classList.add('completed');
-        document.getElementById('packaging-date').textContent = timeline.packaging;
-        document.getElementById('onroad-date').textContent = timeline.onroad;
-        document.getElementById('delivered-date').textContent = timeline.delivered;
-    }
 }
 
-// ===== HELP BUTTON =====
-document.querySelector('.help-button')?.addEventListener('click', function() {
-    alert('Hubungi Customer Service:\n\nWhatsApp: 0812-3456-7890\nEmail: support@bhinekacipta.com\nTelepon: (0281) 6572506');
+// Smooth Scroll
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
 });
 
-// ===== FETCH FROM API (Optional) =====
-async function fetchOrderDetail(orderNumber) {
-    try {
-        // const response = await fetch(`/api/orders/${orderNumber}`, {
-        //     headers: {
-        //         'Authorization': 'Bearer ' + localStorage.getItem('token')
-        //     }
-        // });
-        // const data = await response.json();
-        // return data;
-        
-        return orderData;
-    } catch (error) {
-        console.error('Error fetching order detail:', error);
-        return null;
-    }
-}
-
-// ===== GET ORDER NUMBER FROM URL (Optional) =====
-function getOrderNumberFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('order') || 'ORD-2024-001234';
-}
+// Page load animation
+window.addEventListener('load', () => {
+    document.body.style.opacity = '0';
+    setTimeout(() => {
+        document.body.style.transition = 'opacity 0.5s';
+        document.body.style.opacity = '1';
+    }, 100);
+});

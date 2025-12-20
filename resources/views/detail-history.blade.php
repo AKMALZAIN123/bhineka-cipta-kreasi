@@ -9,10 +9,11 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="container">
+            
             <!-- Back Button -->
-            <a href="{{ route('history') }}" class="back-link">
+            <a href="history.html" class="back-btn">
                 <i class="fas fa-arrow-left"></i>
-                Kembali ke Riwayat Pesanan
+                Kembali ke Pesanan
             </a>
 
             <!-- Order Header -->
@@ -108,7 +109,9 @@
                             @endforeach
                         </div>
                     </div>
+
                 </div>
+            </div>
 
                 <!-- Right Column: Summary -->
                 <div class="right-column">
@@ -177,6 +180,20 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Shipping Info -->
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Alamat Pengiriman</h3>
+                        <p>Jl. Sudirman No. 123, Purwokerto<br>Banyumas, Jawa Tengah 53111</p>
+                    </div>
+                </div>
 
                     @if($order->payment && $order->payment->status === 'pending')
                         <button class="btn-primary btn-pay" data-snap-token="{{ $order->payment->snap_token }}" style="width: 100%; margin-bottom: 10px;">
@@ -192,6 +209,7 @@
                     </button>
                 </div>
             </div>
+
         </div>
     </main>
 
