@@ -29,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->authGuard('admin')
             ->brandName('BCK Application')
-            ->brandLogo(asset('images/logo.png'))
+            ->brandLogo(asset('images/logo_nav.png'))
             ->brandLogoHeight('2rem')
             // ->favicon(asset('images/favicon.png'))
             ->colors([

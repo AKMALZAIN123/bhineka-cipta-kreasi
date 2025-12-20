@@ -49,7 +49,7 @@ class OrderForm
                                 'pending' => 'Pending',
                                 'confirmed' => 'Confirmed',
                                 'processing' => 'Processing',
-                                'shipped' => 'Shipped',
+                                'onroad' => 'onroad',
                                 'delivered' => 'Delivered',
                                 'cancelled' => 'Cancelled',
                             ])

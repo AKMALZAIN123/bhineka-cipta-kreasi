@@ -19,16 +19,6 @@ class ListCustomers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('export_all')
-                ->label('Export All')
-                ->icon('heroicon-o-arrow-down-tray')
-                ->color('success')
-                ->action(function () {
-                    Notification::make()
-                        ->title('Export started!')
-                        ->success()
-                        ->send();
-                }),
         ];
     }
 

@@ -43,7 +43,7 @@ class OrderInfolist
                                                 ->copyMessage('Email copied!')
                                                 ->color('gray'),
 
-                                            TextEntry::make('no_telp')
+                                            TextEntry::make('nomor_telepon')
                                                 ->label('No. Telepon')
                                                 ->icon('heroicon-o-phone')
                                                 ->copyable()
@@ -70,8 +70,8 @@ class OrderInfolist
                                                 ->color(fn (string $state): string => match ($state) {
                                                     'pending' => 'warning',
                                                     'confirmed' => 'info',
-                                                    'processing' => 'primary',
-                                                    'shipped' => 'purple',
+                                                    'packing' => 'primary',
+                                                    'onroad' => 'purple',
                                                     'delivered' => 'success',
                                                     'cancelled' => 'danger',
                                                     default => 'gray',
@@ -79,8 +79,8 @@ class OrderInfolist
                                                 ->icon(fn (string $state): string => match ($state) {
                                                     'pending' => 'heroicon-o-clock',
                                                     'confirmed' => 'heroicon-o-check-circle',
-                                                    'processing' => 'heroicon-o-arrow-path',
-                                                    'shipped' => 'heroicon-o-truck',
+                                                    'packing' => 'heroicon-o-arrow-path',
+                                                    'onroad' => 'heroicon-o-truck',
                                                     'delivered' => 'heroicon-o-check-badge',
                                                     'cancelled' => 'heroicon-o-x-circle',
                                                     default => 'heroicon-o-question-mark-circle',
@@ -93,7 +93,7 @@ class OrderInfolist
                         Group::make([
                             Section::make('Shipping Information')
                                 ->schema([
-                                    TextEntry::make('alamat')
+                                    TextEntry::make('alamat_lengkap')
                                         ->label('Alamat Pengiriman')
                                         ->icon('heroicon-o-map-pin')
                                         ->columnSpanFull(),

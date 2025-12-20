@@ -117,7 +117,7 @@
                                 <i class="far fa-heart"></i>
                             </button>
                             <div class="product-image">
-                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
+                                <img src="{{ $product->image_url ? asset('storage/'.$product->image_url) : asset('img/default.png') }}" alt="{{ $product->name }}">
                             </div>
                             <div class="product-info">
                                 <h3>{{ $product->name }}</h3>

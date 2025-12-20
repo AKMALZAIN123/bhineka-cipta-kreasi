@@ -135,7 +135,6 @@ class PaymentController extends Controller
         try {
             Log::info("Webhook RAW: ".$request->getContent());
 
-            // Parse notification manual (lebih aman)
             $notification = json_decode($request->getContent());
 
             if (!$notification) {

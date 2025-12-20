@@ -360,6 +360,12 @@
     display: flex;
     gap: 1rem;
 }
+.product-actions form {
+    flex: 1;
+}
+.product-actions button {
+    width: 100%;
+}
 
 .btn-add-cart,
 .btn-buy-now {

@@ -17,6 +17,8 @@ class Product extends Model
         'size',
         'price',
         'description',
+        'availability',
+        'image_url',
     ];
 
     protected $casts = [
@@ -37,5 +39,10 @@ class Product extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class, 'product_id');
+    }
+
+    public function getSoldAttribute()
+    {
+        return (int) $this->orderItems()->sum('quantity');
     }
 }

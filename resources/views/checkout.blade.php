@@ -17,7 +17,11 @@
                 Beranda
             </a>
             <i class="fas fa-chevron-right"></i>
-            <a href="{{ route('cart') }}">Keranjang</a>
+            @if(($mode ?? 'cart') === 'cart')
+                <a href="{{ route('cart') }}">Keranjang</a>
+            @else
+                <a href="{{ route('produk') }}">Produk</a>
+            @endif
             <i class="fas fa-chevron-right"></i>
             <span>Checkout</span>
         </div>
@@ -51,6 +55,7 @@
 
         <form action="{{ route('checkout.process') }}" method="POST" id="checkoutForm">
             @csrf
+            <input type="hidden" name="mode" value="{{ $mode ?? 'cart' }}">
             <div class="checkout-layout">
                 <!-- Left Side - Form -->
                 <div class="checkout-form">
@@ -67,7 +72,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="phone">Nomor Telepon *</label>
-                                <input type="tel" id="phone" name="phone" value="{{ old('phone', $user->phone ?? '') }}" placeholder="081234567890" required>
+                                <input type="tel" id="phone" name="phone" value="{{ old('phone', $user->phone ?? '') }}" inputmode="numeric"  pattern="[0-9]{8,15}" maxlength="15" placeholder="081234567890" required>
                             </div>
                             <div class="form-group">
                                 <label for="email">Email *</label>
@@ -156,18 +161,35 @@
 
                     <!-- Products List -->
                     <div class="summary-products">
-                        @foreach($cart->cartItems as $item)
-                        <div class="summary-product-item">
-                            <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product->name }}">
-                            <div class="product-info">
-                                <h4>{{ $item->product->name }}</h4>
-                                <p>{{ $item->quantity }} x Rp {{ number_format($item->product->price, 0, ',', '.') }}</p>
+                        @if(($mode ?? 'cart') === 'buy_now')
+                            <div class="summary-product-item">
+                                <div class="item-image">
+                                <img src="{{ $product->image_url ? asset('storage/'.$product->image_url) : asset('img/default.png') }}" alt="{{ $product->name }}">
+                                </div>
+                                <div class="product-info">
+                                    <h4>{{ $product->name }}</h4>
+                                    <p>{{ $quantity }} x Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                                </div>
+                                <div class="product-price">
+                                    Rp {{ number_format($product->price * $quantity, 0, ',', '.') }}
+                                </div>
                             </div>
-                            <div class="product-price">
-                                Rp {{ number_format($item->product->price * $item->quantity, 0, ',', '.') }}
-                            </div>
-                        </div>
-                        @endforeach
+                        @else
+                            @foreach($cart->cartItems as $item)
+                                <div class="summary-product-item">
+                                    <div class="item-image">
+                                        <img src="{{ $item->product->image_url ? asset('storage/' . $item->product->image_url) : asset('img/default.png') }}" alt="{{ $item->product->name }}">
+                                    </div>
+                                    <div class="product-info">
+                                        <h4>{{ $item->product->name }}</h4>
+                                        <p>{{ $item->quantity }} x Rp {{ number_format($item->product->price, 0, ',', '.') }}</p>
+                                    </div>
+                                    <div class="product-price">
+                                        Rp {{ number_format($item->product->price * $item->quantity, 0, ',', '.') }}
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
 
                     <div class="summary-divider"></div>
@@ -175,7 +197,16 @@
                     <!-- Price Details -->
                     <div class="summary-details">
                         <div class="summary-row">
-                            <span>Subtotal <span class="item-count">({{ $cart->cartItems->count() }} produk)</span></span>
+                            <span>
+                                Subtotal
+                                <span class="item-count">
+                                    @if(($mode ?? 'cart') === 'buy_now')
+                                        (1 produk)
+                                    @else
+                                        ({{ $cart->cartItems->count() }} produk)
+                                    @endif
+                                </span>
+                            </span>
                             <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
                         </div>
                         <div class="summary-row">
@@ -213,7 +244,7 @@
                         Proses Pembayaran
                     </button>
 
-                    <a href="{{ route('cart') }}" class="btn-back">
+                    <a href="{{ ($mode ?? 'cart') === 'buy_now' ? route('produk') : route('cart') }}" class="btn-back">
                         <i class="fas fa-arrow-left"></i>
                         Kembali ke Keranjang
                     </a>

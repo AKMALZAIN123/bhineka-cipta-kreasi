@@ -103,7 +103,7 @@ class OrderSeeder extends Seeder
             'alamat' => 'Jl. Diponegoro No. 99, Semarang, Jawa Tengah 50241',
             'no_telp' => '082345678901',
             'total_amount' => 825000,
-            'status' => 'shipped',
+            'status' => 'onroad',
         ]);
 
         OrderItem::create([

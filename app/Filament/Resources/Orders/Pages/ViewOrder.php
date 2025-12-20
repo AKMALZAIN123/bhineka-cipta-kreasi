@@ -27,29 +27,29 @@ class ViewOrder extends ViewRecord
                         $this->record->update(['status' => 'confirmed']);
                         $this->refreshFormData(['status']);
                     })
-                    ->visible(fn () => $this->record->status === 'pending'),
+                    ->visible(fn () => in_array($this->record->status, ['pending', 'paid'])),
 
-                Action::make('process')
-                    ->label('Process Order')
-                    ->icon('heroicon-o-arrow-path')
+                Action::make('packing')
+                    ->label('Pack Order')
+                    ->icon('heroicon-o-archive-box-arrow-down')
                     ->color('primary')
                     ->requiresConfirmation()
                     ->action(function () {
-                        $this->record->update(['status' => 'processing']);
+                        $this->record->update(['status' => 'packing']);
                         $this->refreshFormData(['status']);
                     })
                     ->visible(fn () => $this->record->status === 'confirmed'),
 
-                Action::make('ship')
-                    ->label('Ship Order')
+                Action::make('onroad')
+                    ->label('On Road')
                     ->icon('heroicon-o-truck')
                     ->color('purple')
                     ->requiresConfirmation()
                     ->action(function () {
-                        $this->record->update(['status' => 'shipped']);
+                        $this->record->update(['status' => 'onroad']);
                         $this->refreshFormData(['status']);
                     })
-                    ->visible(fn () => $this->record->status === 'processing'),
+                    ->visible(fn () => $this->record->status === 'packing'),
 
                 Action::make('deliver')
                     ->label('Mark as Delivered')
@@ -60,7 +60,7 @@ class ViewOrder extends ViewRecord
                         $this->record->update(['status' => 'delivered']);
                         $this->refreshFormData(['status']);
                     })
-                    ->visible(fn () => $this->record->status === 'shipped'),
+                    ->visible(fn () => $this->record->status === 'onroad'),
 
                 Action::make('cancel')
                     ->label('Cancel Order')
@@ -74,9 +74,6 @@ class ViewOrder extends ViewRecord
                     })
                     ->visible(fn () => !in_array($this->record->status, ['delivered', 'cancelled'])),
             ]),
-
-            DeleteAction::make()
-                ->requiresConfirmation(),
         ];
     }
 

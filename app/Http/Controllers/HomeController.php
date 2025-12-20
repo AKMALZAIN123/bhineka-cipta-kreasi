@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Order;
 use App\Models\Cart;
 use Illuminate\Http\Request;
 
@@ -19,7 +20,8 @@ class HomeController extends Controller
 
     public function detail($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::withSum('orderItems as sold', 'quantity')
+            ->findOrFail($id);
 
         return view('detail', compact('product'));
     }
@@ -33,7 +35,43 @@ class HomeController extends Controller
                 ->orWhere('description', 'like', '%' . $request->search . '%');
         }
 
-        $products = $query->latest()->paginate(12);
+        $sort = $request->get('sort', 'default');
+        
+        switch ($sort) {
+            case 'popular':
+                $query->withSum('orderItems', 'quantity')
+                  ->orderByDesc('order_items_sum_quantity');
+                break;
+                
+            case 'newest':
+                $query->orderBy('created_at', 'desc');
+                break;
+                
+            case 'price-low':
+                $query->orderBy('price', 'asc');
+                break;
+                
+            case 'price-high':
+                $query->orderBy('price', 'desc');
+                break;
+                
+            case 'name-asc':
+                $query->orderBy('name', 'asc');
+                break;
+                
+            case 'name-desc':
+                $query->orderBy('name', 'desc');
+                break;
+                
+            default:
+                $query->latest();
+                break;
+        }
+
+        $products = $query->paginate(12);
+        
+        $products->appends($request->all());
+        
         return view('produk', compact('products'));
     }
 
@@ -63,6 +101,11 @@ class HomeController extends Controller
         return view('faq');
     }
 
+    public function profile()
+    {
+        return view('profile');
+    }
+
     // Protected routes
     public function cart()
     {
@@ -87,5 +130,33 @@ class HomeController extends Controller
     public function orders()
     {
         return view('orders');
+    }
+
+    public function history()
+    {
+        $user = auth()->user();
+
+        $orders = Order::with(['orderItems.product', 'payment'])
+            ->where('user_id', $user->user_id) 
+            ->orderByDesc('order_date')       
+            ->paginate(10);
+
+        return view('history', compact('orders'));
+    }
+
+    public function detailHistory(Order $order)
+    {
+        $user = auth()->user();
+
+        if ($order->user_id !== $user->user_id) {
+            abort(403, 'Unauthorized access');
+        }
+
+        $order->load([
+            'orderItems.product',
+            'payment'
+        ]);
+
+        return view('detail-history', compact('order'));
     }
 }

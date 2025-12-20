@@ -47,7 +47,7 @@
                 <div class="order-header">
                     <h3>Detail Pesanan</h3>
                 </div>
-                
+
                 <div class="order-detail-row">
                     <span class="label">Nomor Pesanan</span>
                     <span class="value order-number">{{ $order->order_number ?? 'BCK-' . time() }}</span>
@@ -65,7 +65,7 @@
 
                 <div class="order-detail-row">
                     <span class="label">Status Pembayaran</span>
-                    <span class="badge-pending">
+                    <span class="badge-pending" id="badgeStatus">
                         <i class="fas fa-clock"></i>
                         Menunggu Pembayaran
                     </span>
@@ -79,9 +79,8 @@
                         <i class="fas fa-info-circle"></i>
                         Instruksi Pembayaran
                     </h3>
-                    
+
                     @if(in_array($order->payment_method, ['bca', 'bni', 'bri', 'mandiri']))
-                        <!-- Bank Transfer -->
                         <div class="instruction-card">
                             <div class="instruction-header">
                                 <i class="fas fa-university"></i>
@@ -96,7 +95,7 @@
                                     <span class="va-label">Nomor Virtual Account</span>
                                     <div class="va-number">
                                         <span class="va-value" id="vaNumber">{{ $order->va_number ?? '8012345678901234' }}</span>
-                                        <button class="copy-btn" onclick="copyVA()">
+                                        <button type="button" class="copy-btn" id="btnCopyVA">
                                             <i class="fas fa-copy"></i>
                                             Salin
                                         </button>
@@ -104,7 +103,7 @@
                                 </div>
                                 <div class="va-info">
                                     <span class="va-label">Total Transfer</span>
-                                    <span class="va-value price">{{ formatRupiah($order->total ?? 0) }}</span>
+                                    <span class="va-value price">{{ formatRupiah($order->total_amount ?? 0) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -121,7 +120,6 @@
                         </div>
 
                     @elseif(in_array($order->payment_method, ['gopay', 'dana', 'ovo']))
-                        <!-- E-Wallet -->
                         <div class="instruction-card">
                             <div class="instruction-header">
                                 <i class="fas fa-wallet"></i>
@@ -129,7 +127,7 @@
                             </div>
                             <div class="instruction-body">
                                 <p>Scan QR Code di bawah ini menggunakan aplikasi {{ strtoupper($order->payment_method) }}</p>
-                                
+
                                 @if(isset($order->qr_code_url))
                                     <div class="qr-code">
                                         <img src="{{ $order->qr_code_url }}" alt="QR Code">
@@ -144,7 +142,6 @@
                         </div>
 
                     @elseif($order->payment_method == 'qris')
-                        <!-- QRIS -->
                         <div class="instruction-card">
                             <div class="instruction-header">
                                 <i class="fas fa-qrcode"></i>
@@ -152,7 +149,7 @@
                             </div>
                             <div class="instruction-body">
                                 <p>Scan QR Code menggunakan aplikasi mobile banking atau e-wallet Anda</p>
-                                
+
                                 @if(isset($order->qr_code_url))
                                     <div class="qr-code">
                                         <img src="{{ $order->qr_code_url }}" alt="QRIS">
@@ -171,7 +168,7 @@
 
             <!-- Action Buttons -->
             <div class="action-buttons">
-                <a href="{{ route('home') }}" class="btn-primary">
+                <a href="#" class="btn-primary" id="btnCheckStatus">
                     <i class="fas fa-sync"></i>
                     Cek Status Pembayaran
                 </a>
@@ -193,45 +190,127 @@
 
 @push('scripts')
 <script>
-// Countdown Timer
-let expiryTime = new Date().getTime() + (24 * 60 * 60 * 1000); // 24 hours from now
+(function () {
+  // ====== CONFIG ======
+  const orderId  = "{{ $order->order_id }}";
+  const checkUrl = "{{ route('order.check-status', $order->order_id) }}";
+  const successUrl = "{{ route('order.success') }}?order_id=" + orderId;
+  const errorUrl   = "{{ route('order.error') }}?order_id=" + orderId;
 
-function updateCountdown() {
-    const now = new Date().getTime();
-    const distance = expiryTime - now;
+  console.log('ORDER PENDING SCRIPT LOADED', { orderId, checkUrl });
 
-    if (distance < 0) {
-        document.getElementById('countdown').innerHTML = '<span style="color: #ef4444;">Waktu Habis</span>';
-        return;
+  // ====== COUNTDOWN ======
+  // kalau kamu punya expiry_time dari midtrans, lebih bagus kirim dari backend.
+  let expiryTime = Date.now() + (24 * 60 * 60 * 1000);
+
+  function updateCountdown() {
+    const distance = expiryTime - Date.now();
+    const countdownEl = document.getElementById('countdown');
+
+    if (!countdownEl) return;
+
+    if (distance <= 0) {
+      countdownEl.innerHTML = '<span style="color:#ef4444;font-weight:bold">Waktu Habis</span>';
+      return;
     }
 
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    const hours   = Math.floor((distance / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((distance / (1000 * 60)) % 60);
+    const seconds = Math.floor((distance / 1000) % 60);
 
-    document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-    document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-    document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
-}
+    const hEl = document.getElementById('hours');
+    const mEl = document.getElementById('minutes');
+    const sEl = document.getElementById('seconds');
 
-// Update countdown every second
-setInterval(updateCountdown, 1000);
-updateCountdown();
+    if (hEl) hEl.textContent = String(hours).padStart(2, '0');
+    if (mEl) mEl.textContent = String(minutes).padStart(2, '0');
+    if (sEl) sEl.textContent = String(seconds).padStart(2, '0');
+  }
 
-// Copy VA Number
-function copyVA() {
-    const vaNumber = document.getElementById('vaNumber').textContent;
-    navigator.clipboard.writeText(vaNumber).then(() => {
-        const btn = document.querySelector('.copy-btn');
-        const originalHTML = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check"></i> Tersalin';
-        btn.style.background = '#10b981';
-        
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+
+  // ====== COPY VA ======
+  const btnCopy = document.getElementById('btnCopyVA');
+  if (btnCopy) {
+    btnCopy.addEventListener('click', () => {
+      const vaEl = document.getElementById('vaNumber');
+      if (!vaEl) return;
+
+      const va = vaEl.textContent.trim();
+      navigator.clipboard.writeText(va).then(() => {
+        const original = btnCopy.innerHTML;
+        btnCopy.innerHTML = '<i class="fas fa-check"></i> Tersalin';
+        btnCopy.style.background = '#10b981';
+
         setTimeout(() => {
-            btn.innerHTML = originalHTML;
-            btn.style.background = '';
+          btnCopy.innerHTML = original;
+          btnCopy.style.background = '';
         }, 2000);
+      });
     });
-}
+  }
+
+  // ====== CORE: CHECK STATUS & REDIRECT ======
+  async function checkAndRedirect() {
+    try {
+      const res = await fetch(checkUrl, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'same-origin',
+        cache: 'no-store'
+      });
+
+      // kalau kena redirect/login, res.ok mungkin true tapi content html → json error
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        console.warn('check-status not JSON, maybe redirected?', { status: res.status, contentType });
+        return;
+      }
+
+      const data = await res.json();
+      console.log('Polling result:', data);
+
+      const st = data.status; // pending / paid / cancelled / failed
+
+      if (st === 'paid') {
+        window.location.replace(successUrl);
+        return;
+      }
+
+      if (['cancelled', 'failed'].includes(st)) {
+        window.location.replace(errorUrl);
+        return;
+      }
+
+      // kalau masih pending, do nothing
+    } catch (err) {
+      console.error('Polling error:', err);
+    }
+  }
+
+  // ====== AUTO POLLING every 5s ======
+  const polling = setInterval(checkAndRedirect, 5000);
+  // langsung cek sekali saat halaman dibuka (biar tidak nunggu 5 detik)
+  checkAndRedirect();
+
+  // ====== BUTTON "CEK STATUS" ======
+  const btnCheck = document.getElementById('btnCheckStatus');
+  if (btnCheck) {
+    btnCheck.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      // UX: ubah teks jadi loading sebentar
+      const original = btnCheck.innerHTML;
+      btnCheck.innerHTML = '<i class="fas fa-sync fa-spin"></i> Mengecek...';
+
+      await checkAndRedirect();
+
+      // kalau belum redirect (masih pending), balikin lagi
+      setTimeout(() => {
+        btnCheck.innerHTML = original;
+      }, 500);
+    });
+  }
+})();
 </script>
 @endpush

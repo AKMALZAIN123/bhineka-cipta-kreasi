@@ -29,9 +29,12 @@
                     <button class="icon-btn cart-btn">
                         <i class="fas fa-shopping-cart" onclick="window.location.href='{{ route('cart') }}'"></i>
                         <span class="cart-badge">
-                            {{ auth()->check() ? \App\Models\CartItem::whereHas('cart', function($query) {
-                                $query->where('user_id', auth()->user()->user_id);
-                            })->sum('quantity') : 0 }}
+                            {{ auth()->check()
+                                ? \App\Models\CartItem::whereHas('cart', function ($query) {
+                                    $query->where('user_id', auth()->user()->user_id);
+                                })->count()
+                                : 0
+                            }}
                         </span>
                     </button>
 
@@ -54,9 +57,25 @@
                                     Halo, <strong>{{ Auth::user()->name }}</strong>
                                 </p>
 
+                                <form action="{{ route('profile') }}">
+                                    @csrf
+                                    <button class="dropdown-item">
+                                     <i class="fas fa-user-circle"></i>    
+                                    Profil Saya</button>
+                                </form>
+
+                                <form action="{{ route('history') }}">
+                                    @csrf
+                                    <button class="dropdown-item">
+                                     <i class="fas fa-receipt"></i>    
+                                    Riwayat Pesanan</button>
+                                </form>
+
+                                <div class="dropdown-divider"></div>
+                                
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button class="dropdown-item logout-btn">Logout</button>
+                                    <button type="submit" class="dropdown-item logout-btn">Logout</button>
                                 </form>
                             </div>
                         </div>

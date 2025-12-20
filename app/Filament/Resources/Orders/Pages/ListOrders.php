@@ -18,9 +18,6 @@ class ListOrders extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()
-                ->icon('heroicon-o-plus')
-                ->label('New Order'),
         ];
     }
 
@@ -30,9 +27,10 @@ class ListOrders extends ListRecords
         $counts = Cache::remember('order_counts', 10, function () {
             return $this->getModel()::selectRaw("
                 SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+                SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) as paid,
                 SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirmed,
-                SUM(CASE WHEN status = 'processing' THEN 1 ELSE 0 END) as processing,
-                SUM(CASE WHEN status = 'shipped' THEN 1 ELSE 0 END) as shipped,
+                SUM(CASE WHEN status = 'packing' THEN 1 ELSE 0 END) as packing,
+                SUM(CASE WHEN status = 'onroad' THEN 1 ELSE 0 END) as onroad,
                 SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) as delivered,
                 SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled,
                 COUNT(*) as total
@@ -50,29 +48,35 @@ class ListOrders extends ListRecords
                 ->badgeColor('warning')
                 ->icon('heroicon-o-clock'),
 
+            'paid' => Tab::make('Paid')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'paid'))
+                ->badge($counts->paid ?? 0)
+                ->badgeColor('info')
+                ->icon('heroicon-o-credit-card'),
+
             'confirmed' => Tab::make('Confirmed')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'confirmed'))
                 ->badge($counts->confirmed ?? 0)
                 ->badgeColor('info')
                 ->icon('heroicon-o-check-circle'),
 
-            'processing' => Tab::make('Processing')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'processing'))
-                ->badge($counts->processing ?? 0)
+            'packing' => Tab::make('Packing')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'packing'))
+                ->badge($counts->packing ?? 0)
                 ->badgeColor('primary')
-                ->icon('heroicon-o-arrow-path'),
+                ->icon('heroicon-o-archive-box-arrow-down'),
 
-            'shipped' => Tab::make('Shipped')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'shipped'))
-                ->badge($counts->shipped ?? 0)
+            'onroad' => Tab::make('On Road')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'onroad'))
+                ->badge($counts->onroad ?? 0)
                 ->badgeColor('purple')
                 ->icon('heroicon-o-truck'),
 
-            'delivered' => Tab::make('Delivered')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'delivered'))
-                ->badge($counts->delivered ?? 0)
-                ->badgeColor('success')
-                ->icon('heroicon-o-check-badge'),
+            'confirmed' => Tab::make('Confirmed')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'confirmed'))
+                ->badge($counts->confirmed ?? 0)
+                ->badgeColor('info')
+                ->icon('heroicon-o-check-circle'),
 
             'cancelled' => Tab::make('Cancelled')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'cancelled'))

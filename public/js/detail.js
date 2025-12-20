@@ -374,17 +374,17 @@ cartForm.addEventListener('submit', function(e) {
     }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  const qtyInput = document.getElementById('qtyInput');
+  const buyNowQty = document.getElementById('buyNowQty');
 
-// Buy Now
-const btnBuyNow = document.getElementById('btnBuyNow');
-btnBuyNow.addEventListener('click', () => {
-    // Add to cart first
-    btnAddCart.click();
-    
-    // Redirect to cart after short delay
-    setTimeout(() => {
-        window.location.href = 'cart.html';
-    }, 1000);
+  if (qtyInput && buyNowQty) {
+    buyNowQty.value = qtyInput.value || 1;
+
+    qtyInput.addEventListener('input', () => {
+      buyNowQty.value = qtyInput.value || 1;
+    });
+  }
 });
 
 function calculateCurrentPrice() {
